@@ -1,0 +1,9 @@
+body {
+    display: grid; 
+    grid-template-columns: 3fr 1fr;
+
+}
+
+.gameArea {
+    border-right: 1px black solid;
+}
