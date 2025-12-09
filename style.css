@@ -1,9 +1,35 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+
 body {
+    font-family: "Titillium Web", sans-serif;
     display: grid; 
     grid-template-columns: 3fr 1fr;
-
+    height: 100%;
+    margin: 0;
 }
 
 .gameArea {
     border-right: 1px black solid;
+    height: 100vh;
+    padding: 30px;
+}
+
+h1 {
+    font-size: 50px;
+}
+
+p {
+    font-size: 20px;
+}
+
+a {
+    text-decoration: underline;
+    font-size: 20px;
+    color: blue;
+    
+}
+
+a:hover {
+    cursor: pointer;
 }
