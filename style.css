@@ -7,11 +7,14 @@ body {
     grid-template-columns: 3fr 1fr;
     height: 100%;
     margin: 0;
+    background-image: url("Images/Background.jpg");
+    background-size: cover;
+    background-repeat: none;
 }
 
 .gameArea {
     border-right: 1px black solid;
-    height: 100vh;
+    height: 100%;
     padding: 30px;
 }
 
@@ -20,16 +23,29 @@ h1 {
 }
 
 p {
-    font-size: 20px;
+    font-size: 25px;
 }
 
 a {
     text-decoration: underline;
-    font-size: 20px;
+    font-size: 30px;
     color: blue;
     
 }
 
 a:hover {
     cursor: pointer;
+}
+
+.rightStats {
+    padding: 50px;
+}
+
+#gameImage {
+    height: 250px;
+    width: 390px;
+}
+
+#stageText {
+    margin-top: 0;
 }
