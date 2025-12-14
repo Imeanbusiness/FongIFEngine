@@ -1,25 +1,36 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
+/* Ensure full viewport heights and predictable box-sizing */
+html { height: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
-    font-family: "Titillium Web", sans-serif;
+    /*font-family: "Titillium Web", sans-serif;*/
     display: grid; 
     grid-template-columns: 3fr 1fr;
-    height: 100%;
+    align-items: stretch; /* ensure grid cells match height */
+   min-height: 100vh; /* fill viewport */
     margin: 0;
-    background-image: url("Images/Background.jpg");
-    background-size: cover;
-    background-repeat: none;
+    background-color: white;
 }
 
 .gameArea {
     border-right: 1px black solid;
-    height: 100%;
-    padding: 30px;
+   min-height: 150vh; /* ensure border spans full viewport height */
+  padding: 30px;
+  /* Make contents stack vertically and align to top so title doesn't sit too low */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+   align-self: stretch; /* make sure grid item stretches vertically */
 }
 
 h1 {
     font-size: 50px;
+}
+h2 {
+    font-size: 30px;
 }
 
 p {
@@ -33,6 +44,10 @@ a {
     
 }
 
+#titleName {
+    margin-bottom: 15px;
+}
+
 a:hover {
     cursor: pointer;
 }
@@ -42,10 +57,56 @@ a:hover {
 }
 
 #gameImage {
+  margin: 40px;
     height: 250px;
     width: 390px;
 }
 
 #stageText {
     margin-top: 0;
+}
+
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+
+::-moz-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: grey;
+}
+
+::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* Firefox scrollbar */
+body {
+  scrollbar-color: black rgba(255, 255, 255, 0);
+  scrollbar-width: thin;
+}
+
+
+.gameTitle {
+  text-align: center;
+  padding: 0;
+  /* Ensure title and image are grouped and aligned to the top */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
