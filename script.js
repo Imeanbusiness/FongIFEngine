@@ -368,6 +368,13 @@ function Vent() {
     createStage(timeRemaining+" Minutes Left", stageText, "Move on alone", "MoveOnAlone()", "Help the guy", "HelpGuyVent()", "Get everyone out", "GetEveryoneOutVent()");
 }
 
+
+function MoveOnAlone() {
+    gameAreaFadeOut();
+    timeRemaining -= 2;
+    stagetext = newPar+"You ignore his calls and decide to move on your own. You don't have time to waste on other people. You crawl through the vent for a few minutes until you reach a junction. You've escaped the room, but you still need to get out of the facility."
+}
+
 function TalkOthers() {
     gameAreaFadeOut();
     talkedOthers = true;
