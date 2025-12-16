@@ -8,6 +8,7 @@ let charisma = 0;
 let creativity = 0;
 
 let techSkills = false;
+let talkedOthers = false;
 
 let foughtGuards = false;
 
@@ -17,6 +18,8 @@ let HP = 100;
 let energy = 30;
 let timeRemaining = 60;//In minutes
 let karma = 0;
+let items = [];
+let party = [];
 
 let job = ""; 
 
@@ -116,6 +119,22 @@ function createStage(titleName, stageDesc, opt1, opt1Choice, opt2, opt2Choice, o
     } catch (e) {
 
     }
+    let itemText;
+    try {
+        itemText = "Items: ";
+        for (i = 0; i < items.length; i++) {
+            itemText += items[i] + ", ";
+        }
+        if (items.length == 0) {
+            itemText += "None";
+        } else {
+            itemText = itemText.slice(0, -2);
+        }
+    } catch (e) {
+
+    }
+    document.getElementById("Items").innerHTML = itemText;
+
     stageText = document.createElement("p"); 
     stageText.setAttribute("id", "stageText");
     node = document.createTextNode(stageDesc);
@@ -232,7 +251,7 @@ balls()
 function balls() {
     gameAreaFadeOut();
     
-    createStage("2130 Hours", StartText, "What?", "explainJob()", "I'm an engineer", "chooseJob(1)", "I'm a soldier", "chooseJob(2)", "I'm a businessman", "chooseJob(3)", "I'm an inventor", "chooseJob(4)");
+    createStage("2130 Hours", StartText, "What?", "explainJob()", "I'm an engineer", "chooseJob(1)", "I'm a soldier", "chooseJob(2)", "I'm a businessman", "chooseJob(3)", "I'm an inventor", "chooseJob(4)", "I'm a farmer", "chooseJob(5)");
     document.getElementById("gameImage").src = "Images/ProjectImage.jpg";
 
 
@@ -243,7 +262,7 @@ function balls() {
 function explainJob() {
     gameAreaFadeOut();
     document.getElementById("gameImage").src = "Images/JobSelection.jpeg";
-    text = newPar+ "Picking your job will influence what skills you have. The different jobs have different strengths and weaknesses. Some of them mean you are strong in different ways, but you will lack certain abilities that will help you in the game. This can't be changed during a playthrough! The Engineer and Inventor have high technical skills, allowing them to solve things quickly. However, they are weaker and not very social. The businessman is smart and very charismatic, but lacks strength and creativity. The soldier is very strong and somewhat charismatic, but is not as intelligent or creative. Choose wisely!";
+    text = newPar+ "Picking your job will influence what skills you have. The different jobs have different strengths and weaknesses. Some of them mean you are strong in different ways, but you will lack certain abilities that will help you in the game. This can't be changed during a playthrough! The Engineer and Inventor have high technical skills, allowing them to solve things quickly. However, they are weaker and not very social. The businessman is smart and very charismatic, but lacks strength and creativity. The soldier is very strong and somewhat charismatic, but is not as intelligent or creative. The farmer is strong, intelligent enough, but slightly less charismatic and uncreative. Choose wisely!";
     createStage("0730 Hours", text, "Understood", "balls()", "","")
 }
 
@@ -310,10 +329,12 @@ function Kidnapped(option) {
         stageText = newPar +"You decide to ignore the noise and continue working on your project. After a few minutes, you hear footsteps approaching you from behind. You turn your head to look, but someone hits you on the back of your head. You fall to the ground, unconscious...";
         break;
     }
+    energy = 100;
     createStage("2135 Hours", stageText, "...", "StartGame()", "", "");
 }
 
 function StartGame() {
+    
     timeRemaining = 60;
     gameAreaFadeOut();
     document.getElementById("gameImage").src = "Images/GrayRoom.jpeg";
@@ -339,6 +360,33 @@ function StartGame2() {
     }
 }
 
+function Vent() {
+    energy -= 3;
+    gameAreaFadeOut();
+    timeRemaining -=3;
+    stageText = newPar+"You decide to look for a way out on your own. You start searching around the room and notice a crack in the wall near the ceiling. You can't get there on your own, so you grab someone from the crowd and ask them quietly for help. He gives you a lift and you're in the vent! It seems to lead someplace else in the facility. Perhaps this is where the gas is coming from? You look down and see the guy who helped you waving his arms to be helped. You could move on on your own... Or you could help him. Or you could get everyone out through the vent. What do you do?";
+    createStage(timeRemaining+" Minutes Left", stageText, "Move on alone", "MoveOnAlone()", "Help the guy", "HelpGuyVent()", "Get everyone out", "GetEveryoneOutVent()");
+}
+
+function TalkOthers() {
+    gameAreaFadeOut();
+    talkedOthers = true;
+    timeRemaining -= 3;
+    if (charisma >= 5) {
+        timeRemaining -= 2;
+        stageText = newPar+"You approach a few people and start talking to them. They seem scared, but you manage to calm them down. While the others freak out, the group of you check around the room for a solution. After a few minutes of searching, one of the people finds some text engraved on the wall. It seems to be a clue. There's a keypad to enter a code that can open the door. There's a safe in the corner of the room. After some debating, you've concluded on what the code could be. What do you do now?";
+        createStage(timeRemaining+" Minutes Left", stageText, "Try opening the safe", "TrySafe()", "Try opening the door", "TryDoor()", "Look for another way", "Vent()");
+    } else if (intelligence >= 7) {
+        items.push("Gun");
+        stageText = newPar+"You approach a few people and try talking to them, but they're panicking and you know you don't have time for that. You begin to work alone and notice a safe in the back of the room. It's a fairly old safe that you would imagine would be easy to open. You put your ear up close to the safe, and after a few minutes, you hear some clicks and the door pops open. Inside the safe, there is a gun. Why would that be in there? You quickly pocket it before anyone notices. What do you do now?";
+        createStage(timeRemaining+" Minutes Left", stageText, "Continue to investigate", "ContinueInvestigate()", "Look for another way", "Vent()");
+    }  else {
+        stageText = newPar+"You try to approach a few people and talk to them, but they're panicking and you don't know what to do. You feel useless as you stand there while everyone else is freaking out. After a few minutes, you snap out of it and realize you need to find a way out of here. What do you do now?";
+        createStage(timeRemaining+" Minutes Left", stageText, "Look for another way", "Vent()", "Wait", "WaitForPeople()");
+    }
+    stageText = newPar+""
+}
+
 function explainSuit() {
     gameAreaFadeOut();
     document.getElementById("gameImage").src = "Images/SuitGuy.jpg";
@@ -351,13 +399,14 @@ function explainSuit() {
 }
 
 function FightGuards() {
+    energy -= 10;
     gameAreaFadeOut();
     foughtGuards = true;
     timeRemaining -= 1;
     if (strength >= 7) {
         document.getElementById("gameImage").src = "Images/FightSuccess.jpg";
         stageText = newPar+"You tackle one of the guards, catching him off gurad. The door slams shut as the other guard turns to help fight you off, but you quickly knock him to the ground as you bash your hands into the first guard's face. The second guard calls for help, and you can hear footsteps running towards you. Shit. You think there are about 4 more on their way, and you need to act fast. What do you do now?";
-        createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "Fight2()", "Run", "RunFromGuards", "Surrender", "StartGame3()");
+        createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "Fight2()", "Run", "RunFromGuards()", "Surrender", "Surrendered1()");
     } else {
         HP-=10; 
         stageText = newPar+"You tried to tackle one of the guards, but you were promptly attacked by both guards. It hurts like hell, and you're stuck in the same situation you were a minute a go. Dammit. What do you do now?";
@@ -365,6 +414,16 @@ function FightGuards() {
         crossOutOption(2);
     }
 }
+
+
+function Surrendered1() {
+    gameAreaFadeOut(); 
+    HP-=10;
+    items.push("Keycard");
+    stageText = newPar+"You put your hands behind your head and the guards roughed you up. You put your hands up to block the hits, and snagged a keycard from one of the guards while doing so. They then throw you back in the room, and now you're back where you started. Damn.";
+    createStage(timeRemaining+" Minutes Left", stageText, "Understood", "StartGame2()", "", "");
+}
+
 
 
  document.addEventListener("keypress", function(event) {
