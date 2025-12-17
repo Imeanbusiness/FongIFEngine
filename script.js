@@ -301,7 +301,6 @@ function chooseJob(jobid) {
         break;
         case 5: 
         job = "Farmer"
-        techSkills = true;
         charisma = 3;
         strength = 7;
         intelligence = 6;
@@ -364,6 +363,8 @@ function Vent() {
     energy -= 3;
     gameAreaFadeOut();
     timeRemaining -=3;
+    document.getElementById("gameImage").src = "Images/Vent.jpg";
+
     stageText = newPar+"You decide to look for a way out on your own. You start searching around the room and notice a crack in the wall near the ceiling. You can't get there on your own, so you grab someone from the crowd and ask them quietly for help. He gives you a lift and you're in the vent! It seems to lead someplace else in the facility. Perhaps this is where the gas is coming from? You look down and see the guy who helped you waving his arms to be helped. You could move on on your own... Or you could help him. Or you could get everyone out through the vent. What do you do?";
     createStage(timeRemaining+" Minutes Left", stageText, "Move on alone", "MoveOnAlone()", "Help the guy", "HelpGuyVent()", "Get everyone out", "GetEveryoneOutVent()");
 }
@@ -372,8 +373,31 @@ function Vent() {
 function MoveOnAlone() {
     gameAreaFadeOut();
     timeRemaining -= 2;
-    stagetext = newPar+"You ignore his calls and decide to move on your own. You don't have time to waste on other people. You crawl through the vent for a few minutes until you reach a junction. You've escaped the room, but you still need to get out of the facility."
+    stageText = newPar+"You ignore his calls and decide to move on your own. You don't have time to waste on other people. You crawl through the vent for a few minutes until you reach a junction. You've escaped the room, but you still need to get out of the facility. You crawl out of the vent and find yourself in the middle of the facility, just outside the room. Alright. Now What?";
+    createStage(timeRemaining+" Minutes Left",stageText, "Try and break the others out", "BreakOthersOut()", "Explore", "ExploreFacility()");
 }
+
+function BreakOthersOut() {
+    gameAreaFadeOut();
+    if (techSkills==true) {
+        timeRemaining -= 4;
+        stageText = newPar+"You decided to try and break the others out. The door is locked by an electronic lock, it seems rather complex to break through, but you have some technical skills that could help you. After a few minutes of working on the lock, you manage to bypass the security and open the door. The others rush out, thanking you for saving them. A couple of people are eager to join you. But you still need to find a way out of the facility. What should you do?";
+    } else if (items.includes("Keycard LVL 1")) {
+        timeRemaining -= 2;
+        stageText = newPar+"You decided to try and break the others out. The door is locked by an electronic lock, but you remember you have a keycard you took from one of the guards. You swipe the card, and the door beeps and opens. The others rush out, thanking you for saving them. But you still need to find a way out of the facility. A couple of people are eager to join you. What should you do?";
+    }
+
+    if (techSkills==false && !items.includes("Keycard LVL 1")) {
+        timeRemaining -= 3;
+        stageText = newPar+"You decided to try and break the others out. The door is locked by an electronic lock, and you don't think you can break through it. After a few minutes of trying, you realize you can't do it. You need to find another way out. What should you do?";
+        createStage(timeRemaining+" Minutes Left", stageText, "Try and break the others out", "BreakOthersOut()", "Explore", "ExploreFacility()");
+        crossOutOption(1);
+    } else {
+        createStage(timeRemaining+" Minutes Left", stageText, "Explore on your own", "ExploreFacility()", "Explore with others", "");
+    }
+
+}
+
 
 function TalkOthers() {
     gameAreaFadeOut();
@@ -412,7 +436,7 @@ function FightGuards() {
     timeRemaining -= 1;
     if (strength >= 7) {
         document.getElementById("gameImage").src = "Images/FightSuccess.jpg";
-        stageText = newPar+"You tackle one of the guards, catching him off gurad. The door slams shut as the other guard turns to help fight you off, but you quickly knock him to the ground as you bash your hands into the first guard's face. The second guard calls for help, and you can hear footsteps running towards you. Shit. You think there are about 4 more on their way, and you need to act fast. What do you do now?";
+        stageText = newPar+"You tackle one of the guards, catching him off guard. The door slams shut as the other guard turns to help fight you off, but you quickly knock him to the ground as you bash your hands into the first guard's face. The second guard calls for help, and you can hear footsteps running towards you. Shit. You think there are about 4 more on their way, and you need to act fast. What do you do now?";
         createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "Fight2()", "Run", "RunFromGuards()", "Surrender", "Surrendered1()");
     } else {
         HP-=10; 
@@ -426,7 +450,7 @@ function FightGuards() {
 function Surrendered1() {
     gameAreaFadeOut(); 
     HP-=10;
-    items.push("Keycard");
+    items.push("Keycard LVL 1");
     stageText = newPar+"You put your hands behind your head and the guards roughed you up. You put your hands up to block the hits, and snagged a keycard from one of the guards while doing so. They then throw you back in the room, and now you're back where you started. Damn.";
     createStage(timeRemaining+" Minutes Left", stageText, "Understood", "StartGame2()", "", "");
 }
