@@ -2,6 +2,29 @@ const gameArea = document.getElementById("gameArea");
 const htmll = document.html;
 const newPar ="         ";
 
+
+
+class character {
+    constructor(name, strength, intelligence, charisma, creativity, hp, energy, techSkills = false) {
+        this.name = name;
+        this.strength = strength;
+        this.intelligence = intelligence;
+        this.charisma = charisma;
+        this.creativity = creativity;
+        this.hp = hp;
+        this.energy = energy;
+        this.techSkills = techSkills
+    }
+}
+
+//character list
+
+James = new character("James", 7, 4, 4, 5, 100, 80);
+
+
+
+//character list end
+
 let strength = 0;
 let intelligence = 0;
 let charisma = 0;
@@ -9,10 +32,12 @@ let creativity = 0;
 
 let techSkills = false;
 let talkedOthers = false;
-
+let brokeOthersOut = false;
+let triedOffice = false;
 let foughtGuards = false;
 
 let viewmode = "light";
+
 
 let HP = 100;
 let energy = 30;
@@ -61,28 +86,13 @@ window.onload = function() {
 balls
 function gameAreaFadeOut() {
     
-    introFade3 = setInterval(FadeIn, 16.666667);
-    
-    opac = -0
-    faded = false;
-    function FadeIn() {
-        
-        if (opac >= 1) {
-            
-            clearInterval(introFade3);
-            faded = true
-
-
-        } else {
-            opac-=0.001666666667; 
-            gameArea.style.opacity = opac; 
-        }
-    }  
 
 }
 
 function gameAreaFadeIn() {
-    introFade3 = setInterval(FadeIn, 16.6666667);
+    opac = 0
+    gameArea.style.opacity = opac; 
+    introFade3 = setInterval(FadeIn, 17);
     opac = -0
     faded = false;
     function FadeIn() {
@@ -103,6 +113,8 @@ function gameAreaFadeIn() {
 
 
 function createStage(titleName, stageDesc, opt1, opt1Choice, opt2, opt2Choice, opt3 = "none", opt3Choice = "none", opt4 = "none", opt4Choice = "none", opt5 = "none", opt5Choice = "none", opt6 = "none", opt6Choice = "none", opt7 = "none", opt7Choice = "none") {
+    console.log(party);
+    console.log(items);
     document.getElementById("HP").innerHTML = "HP: " + HP+" / 100";
     document.getElementById("Energy").innerHTML = "Energy: " + energy+" / 100";
     document.getElementById("titleName").innerHTML = titleName;
@@ -134,6 +146,22 @@ function createStage(titleName, stageDesc, opt1, opt1Choice, opt2, opt2Choice, o
 
     }
     document.getElementById("Items").innerHTML = itemText;
+
+    let partyText;
+    try {
+        partyText = "Party: ";
+        for (i = 0; i < party.length; i++) {
+            partyText += party[i] + ", ";
+        }
+        if (party.length == 0) {
+            partyText += "None";
+        } else {
+            partyText = partyText.slice(0, -2);
+        }
+    } catch (e) {
+
+    }
+    document.getElementById("Party").innerHTML = partyText;
 
     stageText = document.createElement("p"); 
     stageText.setAttribute("id", "stageText");
@@ -371,13 +399,49 @@ function Vent() {
 
 
 function MoveOnAlone() {
+    karma -= 10;
     gameAreaFadeOut();
+    document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
     timeRemaining -= 2;
     stageText = newPar+"You ignore his calls and decide to move on your own. You don't have time to waste on other people. You crawl through the vent for a few minutes until you reach a junction. You've escaped the room, but you still need to get out of the facility. You crawl out of the vent and find yourself in the middle of the facility, just outside the room. Alright. Now What?";
     createStage(timeRemaining+" Minutes Left",stageText, "Try and break the others out", "BreakOthersOut()", "Explore", "ExploreFacility()");
 }
 
+function HelpGuyVent() {
+    energy-=5;
+    party.push(James.name);
+    gameAreaFadeOut();
+    timeRemaining -= 4;
+    document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
+    stageText = newPar+"You put your arm out and help the person up. It takes a while for both of you to get through the vent, but you both make it out! His name is James, and he has joined your party. He seems to have a rather strong build. Now, what should you do?";
+    createStage(timeRemaining+" Minutes Left", stageText, "Try and break the others out", "BreakOthersOut()", "Explore", "ExploreFacility()");
+}
+
+function ExploreFacility() {
+    energy-=5;
+    timeRemaining -= 3;
+    stageText = newPar+"You don't have any time to waste. You run through the halls, and you hear the cries and panic of more people, but you are adamant on getting out of and away from the facility first. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you to do. What do you explore first?"
+    document.getElementById("gameImage").src = "Images/AbandonedFacilityLobby.jpg";
+    createStage(timeRemaining+" Minutes Left", stageText, "The Plant", "PlantStart()", "The Assembly Line", "AssemblyLineStart()", "The Garage", "GarageStart()", "The Office", "TheOffice()")
+
+}
+
+function TheOffice() {
+    triedOffice = true 
+    if (items.includes("Keycard LVL 3")) {
+    } else {
+        timeRemaining -= 2;
+        stageText = newPar+"You waste no time and run up the stairs. This is probably where that man is hiding. The door is made of steel, and there seems to be no way in. There's a keycard slot to tap, but it doesn't seem to be like the others... It's more complex, and much sturdier. You return to the lobby. What do you explore?";
+        createStage(timeRemaining+" Minutes Left", stageText, "The Plant", "PlantStart()", "The Assembly Line", "AssemblyLineStart()", "The Garage", "GarageStart()", "The Office", "TheOffice()")
+        crossOutOption(4);
+
+    }
+}
+
+
+
 function BreakOthersOut() {
+    karma+=20;
     gameAreaFadeOut();
     if (techSkills==true) {
         timeRemaining -= 4;
@@ -393,7 +457,8 @@ function BreakOthersOut() {
         createStage(timeRemaining+" Minutes Left", stageText, "Try and break the others out", "BreakOthersOut()", "Explore", "ExploreFacility()");
         crossOutOption(1);
     } else {
-        createStage(timeRemaining+" Minutes Left", stageText, "Explore on your own", "ExploreFacility()", "Explore with others", "");
+        brokeOthersOut = true;
+        createStage(timeRemaining+" Minutes Left", stageText, "Explore on your own", "ExploreFacility()", "Explore with others", "ExploreWithOthers");
     }
 
 }
@@ -437,7 +502,7 @@ function FightGuards() {
     if (strength >= 7) {
         document.getElementById("gameImage").src = "Images/FightSuccess.jpg";
         stageText = newPar+"You tackle one of the guards, catching him off guard. The door slams shut as the other guard turns to help fight you off, but you quickly knock him to the ground as you bash your hands into the first guard's face. The second guard calls for help, and you can hear footsteps running towards you. Shit. You think there are about 4 more on their way, and you need to act fast. What do you do now?";
-        createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "Fight2()", "Run", "RunFromGuards()", "Surrender", "Surrendered1()");
+        createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "Fight2()", "Run", "Explore()", "Surrender", "Surrendered1()");
     } else {
         HP-=10; 
         stageText = newPar+"You tried to tackle one of the guards, but you were promptly attacked by both guards. It hurts like hell, and you're stuck in the same situation you were a minute a go. Dammit. What do you do now?";
