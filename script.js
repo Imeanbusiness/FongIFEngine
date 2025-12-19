@@ -19,7 +19,10 @@ class character {
 
 //character list
 
-James = new character("James", 7, 4, 4, 5, 100, 80);
+let Player;
+let James = new character("James", 7, 4, 4, 5, 100, 80);
+let Kelly = new character("Kelly", 3, 3, 7, 7, 90, 90, true);
+let Viktor = new character("Viktor", 10, 0, 5, 5, 100, 50)
 
 
 
@@ -35,6 +38,8 @@ let talkedOthers = false;
 let brokeOthersOut = false;
 let triedOffice = false;
 let foughtGuards = false;
+let triedDoor = false;
+let triedplant = false;
 
 let viewmode = "light";
 
@@ -45,6 +50,7 @@ let timeRemaining = 60;//In minutes
 let karma = 0;
 let items = [];
 let party = [];
+let dataParty = [];
 
 let job = ""; 
 
@@ -115,6 +121,7 @@ function gameAreaFadeIn() {
 function createStage(titleName, stageDesc, opt1, opt1Choice, opt2, opt2Choice, opt3 = "none", opt3Choice = "none", opt4 = "none", opt4Choice = "none", opt5 = "none", opt5Choice = "none", opt6 = "none", opt6Choice = "none", opt7 = "none", opt7Choice = "none") {
     console.log(party);
     console.log(items);
+    console.log(dataParty);
     document.getElementById("HP").innerHTML = "HP: " + HP+" / 100";
     document.getElementById("Energy").innerHTML = "Energy: " + energy+" / 100";
     document.getElementById("titleName").innerHTML = titleName;
@@ -335,6 +342,7 @@ function chooseJob(jobid) {
         creativity = 4;
         break;
     }   
+    Player = new character("Player", strength, intelligence, charisma, creativity, HP, energy);
     stageText = newPar +"Right, you're a " + job + ". You've been writing this project for weeks now, and you're about to finish it tonight. You feel pretty tired, but you're happy to be almost done. Then you heard a sound. CRASH! Something just broke in the other room of your house. What do you do?";
     document.getElementById("Job").innerHTML = "Job: " + job;
     if (job=="Engineer" || job=="Inventor") {
@@ -343,6 +351,7 @@ function chooseJob(jobid) {
     createStage("2130 Hours", stageText, "Investigate the noise", "Kidnapped(1)", "Ignore it and continue working", "Kidnapped(2)"); 
     document.getElementById("gameImage").src = "Images/BrokenWindow.jpeg";
 }   
+
 
 function Kidnapped(option) {
     gameAreaFadeOut();
@@ -390,7 +399,7 @@ function StartGame2() {
 function Vent() {
     energy -= 3;
     gameAreaFadeOut();
-    timeRemaining -=3;
+    timeRemaining -= (12 - creativity);
     document.getElementById("gameImage").src = "Images/Vent.jpg";
 
     stageText = newPar+"You decide to look for a way out on your own. You start searching around the room and notice a crack in the wall near the ceiling. You can't get there on your own, so you grab someone from the crowd and ask them quietly for help. He gives you a lift and you're in the vent! It seems to lead someplace else in the facility. Perhaps this is where the gas is coming from? You look down and see the guy who helped you waving his arms to be helped. You could move on on your own... Or you could help him. Or you could get everyone out through the vent. What do you do?";
@@ -410,6 +419,7 @@ function MoveOnAlone() {
 function HelpGuyVent() {
     energy-=5;
     party.push(James.name);
+    dataParty.push(James);
     gameAreaFadeOut();
     timeRemaining -= 4;
     document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
@@ -417,10 +427,46 @@ function HelpGuyVent() {
     createStage(timeRemaining+" Minutes Left", stageText, "Try and break the others out", "BreakOthersOut()", "Explore", "ExploreFacility()");
 }
 
+function GetEveryoneOutVent() {
+    energy-=2
+    timeRemaining -= 20;
+    document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
+    stageText = newPar+"You scream into the room that you've found a way out. The crowd bolts in curiousity, and one by one, they make it out, and you help them. It's taken a significant amount of time, but you have gotten everyone out of the room! Now what do you do?";
+    createStage(timeRemaining+" Minutes Left",stageText, "Try and break the others out", "BreakOthersOut()", "Explore on your own", "ExploreFacility()", "Explore with others", "ExploreWithOthers()");
+    crossOutOption(1);
+}
+
 function ExploreFacility() {
     energy-=5;
     timeRemaining -= 3;
     stageText = newPar+"You don't have any time to waste. You run through the halls, and you hear the cries and panic of more people, but you are adamant on getting out of and away from the facility first. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you to do. What do you explore first?"
+    if (party.includes("James")) {
+        stageText = newPar+"You don't have any time to waste. You run through the halls, bringing James, and you hear the cries and panic of more people, but you are adamant on getting out of and away from the facility first. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you to do. What do you explore first?"
+    }
+    document.getElementById("gameImage").src = "Images/AbandonedFacilityLobby.jpg";
+    createStage(timeRemaining+" Minutes Left", stageText, "The Plant", "PlantStart()", "The Assembly Line", "AssemblyLineStart()", "The Garage", "GarageStart()", "The Office", "TheOffice()")
+
+}
+
+function ExploreWithOthers() {
+    energy-=5;
+    timeRemaining -= 10;
+    party.push('Kelly')
+    party.push('Viktor')
+
+    dataParty.push(Kelly);
+    dataParty.push(Viktor);
+    if (party.includes("James")) {
+    } else {
+        party.push('James')
+        dataParty.push(James);
+    }
+    stageText = newPar+"You begin to organise the group, but it takes a while since you're not used to this. Nevertheless, you pull yourself together and now you have a team to help you. Most of them choose to stay behind and try to break the others out of their rooms. James, a well built man, Kelly, an engineer, and Viktor, a former soldier, choose to join you. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you guys to do. What do you explore first?"
+    if (charisma >= 5) {
+        timeRemaining += 5;
+        stageText = newPar+"You begin to organise the group, and most of them choose to stay behind and try to break the others out of their rooms. James, a well built man, Kelly, an engineer, and Viktor, a former soldier, choose to join you. You guys move through the hallways and make it to the center of the facility. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you guys to do. What do you explore first?"
+
+    }
     document.getElementById("gameImage").src = "Images/AbandonedFacilityLobby.jpg";
     createStage(timeRemaining+" Minutes Left", stageText, "The Plant", "PlantStart()", "The Assembly Line", "AssemblyLineStart()", "The Garage", "GarageStart()", "The Office", "TheOffice()")
 
@@ -435,6 +481,79 @@ function TheOffice() {
         createStage(timeRemaining+" Minutes Left", stageText, "The Plant", "PlantStart()", "The Assembly Line", "AssemblyLineStart()", "The Garage", "GarageStart()", "The Office", "TheOffice()")
         crossOutOption(4);
 
+    }
+}
+
+function PlantStart() {
+    
+    
+    let canOpen = false;
+
+    document.getElementById("gameImage").src = "Images/Plant.jpg";
+    try {
+        for (i = 0; i < dataParty.length; i++) {
+            if (dataParty[i].techSkills == true) {
+                canOpen = true;
+            }
+        }
+    } catch (e) {
+        canOpen = false;
+    }
+    if (techSkills) {
+        canOpen = true;
+    }
+    timeRemaining-=1;
+    stageText = newPar+"You make your way to the plant. Maybe that's where the gas will be released. You arive to see large pipes, and a locked door with a keycard panel that looks hackable. Maybe that could lead somewhere important. But there is still a large amount that must be explored for clues. Or you could turn back."
+    createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
+    if (triedplant) {
+        crossOutOption(2);
+    }
+}
+
+function ExplainPlant() {
+    stageText = newPar+"The plant reeks of something horrible. It smells like something died here. There seems to be some kind of container that can be opened, but it's completely locked. The valves on the pipes can be turned, and are connected to the container. The room is dark as hell, so you wouldn't imagine it'd be very easy to find what you need."
+    createStage(timeRemaining+" Minutes Left",stageText,"Understood","PlantStart()", "", "");
+}
+
+function TryPlantDoor() {
+    let canOpen = false;
+    triedplant = true;
+    document.getElementById("gameImage").src = "Images/Plant.jpg";
+    try {
+        for (i = 0; i < dataParty.length; i++) {
+            if (dataParty[i].techSkills == true) {
+                canOpen = true;
+            }
+        }
+    } catch (e) {
+        //canOpen = false;
+    }
+    if (canOpen && techSkills) {
+        timeRemaining -= 4
+        items.push('Keycard LVL 3');
+        stageText = newPar+"It takes you a while, but after a while of working, and thanks to some help from Kelly, you've broken open the door, and you now have access to a control room. You don't think you were supposed to be here, but the controls don't seem to do anything. There's a Keycard LVL 3 on the table, so you decide to snag it. Now what?"
+        createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
+        crossOutOption(2);
+    } else {
+        timeRemaining -= 2
+        stageText = newPar+"No matter how hard you tried, you couldn't break it open. There is still stuff to do in the plant. Now what?"
+        createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
+        crossOutOption(2);
+    }
+    
+}
+
+function InvestigatePlant() {
+    timeRemaining -= 5 - (party.length)
+}
+
+function ReturnToLobby() {
+    document.getElementById("gameImage").src = "Images/AbandonedFacilityLobby.jpg";
+    timeRemaining-=1;
+    stageText = newPar+"You returned to the lobby. You don't have much more time to waste. Where do you go now?";
+    createStage(timeRemaining+" Minutes Left", stageText, "The Plant", "PlantStart()", "The Assembly Line", "AssemblyLineStart()", "The Garage", "GarageStart()", "The Office", "TheOffice()")
+    if (triedOffice) {
+        crossOutOption(4)
     }
 }
 
@@ -458,7 +577,7 @@ function BreakOthersOut() {
         crossOutOption(1);
     } else {
         brokeOthersOut = true;
-        createStage(timeRemaining+" Minutes Left", stageText, "Explore on your own", "ExploreFacility()", "Explore with others", "ExploreWithOthers");
+        createStage(timeRemaining+" Minutes Left", stageText, "Explore on your own", "ExploreFacility()", "Explore with others", "ExploreWithOthers()");
     }
 
 }
@@ -474,14 +593,57 @@ function TalkOthers() {
         createStage(timeRemaining+" Minutes Left", stageText, "Try opening the safe", "TrySafe()", "Try opening the door", "TryDoor()", "Look for another way", "Vent()");
     } else if (intelligence >= 7) {
         items.push("Gun");
-        stageText = newPar+"You approach a few people and try talking to them, but they're panicking and you know you don't have time for that. You begin to work alone and notice a safe in the back of the room. It's a fairly old safe that you would imagine would be easy to open. You put your ear up close to the safe, and after a few minutes, you hear some clicks and the door pops open. Inside the safe, there is a gun. Why would that be in there? You quickly pocket it before anyone notices. What do you do now?";
-        createStage(timeRemaining+" Minutes Left", stageText, "Continue to investigate", "ContinueInvestigate()", "Look for another way", "Vent()");
+        stageText = newPar+"You approach a few people and try talking to them, but they're panicking and you know you don't have time for that. You begin to work alone and notice a safe in the back of the room. It's a fairly old safe that you would imagine would be easy to open. You put your ear up close to the safe, and after a few minutes, you hear some clicks and the door pops open. Inside the safe, there is a gun. Why would that be in there? You quickly pocket it before anyone notices. There's a note inside. Only one person makes it out. What do you do now?";
+        createStage(timeRemaining+" Minutes Left", stageText, "Oblige", "KillThemAll()", "Look for another way", "Vent()");
     }  else {
         stageText = newPar+"You try to approach a few people and talk to them, but they're panicking and you don't know what to do. You feel useless as you stand there while everyone else is freaking out. After a few minutes, you snap out of it and realize you need to find a way out of here. What do you do now?";
         createStage(timeRemaining+" Minutes Left", stageText, "Look for another way", "Vent()", "Wait", "WaitForPeople()");
     }
-    stageText = newPar+""
 }
+
+function TrySafe() {
+    timeRemaining -= 1;
+    items.push("Gun")
+    stageText = newPar+"You tried to open up the safe with the code, and it works! You open it up, and there's a gun inside. You pull it out, and the people who had just begun to calm down start panicking once more. There's a note in there. Only one person makes it out. What should you do?"
+    createStage(timeRemaining+" Minutes Left", stageText, "Oblige", "KillThemAll()", "Try opening the door", "TryDoor()", "Look for another way", "Vent()");
+    if (triedDoor) {
+        crossOutOption(2);
+    }
+}
+
+function TryDoor() {
+    timeRemaining -= 1;
+    triedDoor = true;
+    if (items.includes("Gun")) {
+        stageText = newPar+"You pocket the gun, and run to the door trying to enter the same code in. It doesn't work. The people in the room are getting more nervous by the second. What do you do?";
+        createStage(timeRemaining+" Minutes Left", stageText, "Oblige", "KillThemAll()", "Try opening the door", "TryDoor()", "Look for another way", "Vent()");
+        crossOutOption(2);
+    } else {
+        stageText = newPar+"You rush to the door and enter the code, but it doesn't work... Maybe it's meant for something else? What do you do now?";
+        createStage(timeRemaining+" Minutes Left", stageText, "Try opening the safe", "TrySafe()", "Try opening the door", "TryDoor()", "Look for another way", "Vent()");
+        crossOutOption(2);
+    }
+}
+
+function KillThemAll() {
+    timeRemaining -= (13-strength);
+    karma -= 100;
+    energy -= 20;
+    HP-=20
+    if (strength >= 5) {
+        HP+=10;
+    }
+    document.getElementById("gameImage").src = "Images/GunInHand.jpg";
+    items.splice(items.indexOf("Gun"));
+    stageText = newPar+"You cock the gun. You need to get out of here, somehow. You point it at your first victim. You close your eyes as you hear the gunshot. Your ears are ringing, and the rest of the people in the room duck with hands on their ears. Next thing you know, you can't stop. You pull the trigger several more times. The gun has enough just enough bullets for everyone in the room. Some ran, some begged, but you spared them no mercy. The lst of them tried to fight back, but their slight success was in vain. You still had the gun. And now the room is filled with their blood.\n\n"+newPar+"The door to the room opens. There's no announcement, no one to escort you out. The gun is empty now, and you don't think it'll be of any use to you anymore. You leave it in the room as you walk out, alone. You're in the halls now. What do you do?";
+    if (strength >= 5) {
+        stageText = newPar+"You cock the gun. You need to get out of here, somehow. You point it at your first victim and pull it with n hesitation. Just like before. Your ears are ringing, and the rest of the people in the room duck with hands on their ears. Next thing you know, you can't stop. You pull the trigger several more times. The gun has enough just enough bullets for everyone in the room. Some ran, some begged, but you spared them no mercy. The lst of them tried to fight back, but their slight success was in vain. You still had the gun. And now the room is filled with their blood.\n\n"+newPar+"The door to the room opens. There's no announcement, no one to escort you out. The gun is empty now, and you don't think it'll be of any use to you anymore. You leave it in the room as you walk out, alone. You're in the halls now. What do you do?";
+        
+    }
+    createStage(timeRemaining+" Minutes Left", stageText,  "Try and break the others out", "BreakOthersOut()", "Explore", "ExploreFacility()")
+    crossOutOption(1);
+}
+
 
 function explainSuit() {
     gameAreaFadeOut();
@@ -489,7 +651,7 @@ function explainSuit() {
         stageText = newPar+"The man in the suit seems to be the leader of this operation. You don't remember the face, but you know you've seen him before. You try not to think about it too much, as you don't have a lot of time to find a solution.";
 
     if (intelligence >= 5) {
-        stageText = newPar+"The man in the suit seems to be the leader of this operation. You don't remember the face, but you knwo you've seen him before. He was on the headlines. You believe that he has had his conflicts with the government before. You wonder what the big picture of this could be... What could this be about? You try not to think about it too much, as you don't have a lot of time to find a solution.";
+        stageText = newPar+"The man in the suit seems to be the leader of this operation. You don't remember the face, but you know you've seen him before. He was on the headlines. You believe that he has had his conflicts with the government before. You wonder what the big picture of this could be... What could this be about? You try not to think about it too much, as you don't have a lot of time to find a solution.";
     }
     createStage(timeRemaining+" Minutes Left", stageText, "Understood", "StartGame2()", "", "");
 }
@@ -502,15 +664,33 @@ function FightGuards() {
     if (strength >= 7) {
         document.getElementById("gameImage").src = "Images/FightSuccess.jpg";
         stageText = newPar+"You tackle one of the guards, catching him off guard. The door slams shut as the other guard turns to help fight you off, but you quickly knock him to the ground as you bash your hands into the first guard's face. The second guard calls for help, and you can hear footsteps running towards you. Shit. You think there are about 4 more on their way, and you need to act fast. What do you do now?";
-        createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "Fight2()", "Run", "Explore()", "Surrender", "Surrendered1()");
+        createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "FightGuards2()", "Run", "Explore()", "Surrender", "Surrendered1()");
     } else {
         HP-=10; 
         stageText = newPar+"You tried to tackle one of the guards, but you were promptly attacked by both guards. It hurts like hell, and you're stuck in the same situation you were a minute a go. Dammit. What do you do now?";
-        createStage(timeRemaining+" Minutes Left", stageText, "Man in the Suit?", "explainSuit()", "Fight", "", "Wait and find a way out", "Vent()", "Talk to others", "TalkOthers()"); 
+        createStage(timeRemaining+" Minutes Left", stageText, "Man in the Suit?", "explainSuit()", "Fight", "FightGuards()", "Wait and find a way out", "Vent()", "Talk to others", "TalkOthers()"); 
         crossOutOption(2);
     }
 }
 
+
+function FightGuards2() {
+    document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
+    energy -= 10;
+    timeRemaining -= 2;
+    if (strength >= 10) {
+        energy -= 10;
+        timeRemaining -= 4;
+        items.push("Keycard LVL 1")
+        stageText = newPar+"You continue to beat the living hell out of the guards and begin to destroy the guards who came forward. You knock them all out, and while it was tiring, you are able to get everyone out of the room! You snag a Keycard LVL 1 from one of the guards' unconcious body. Now what?";
+        createStage(timeRemaining+" Minutes Left",stageText, "Try and break the others out", "BreakOthersOut()", "Explore on your own", "ExploreFacility()", "Explore with others", "ExploreWithOthers()");
+        crossOutOption(1);
+    } else {
+        HP-=20
+        stageText = newPar+"You try to fight the other guards, but they quickly overpower you. You are beaten to a pulp, and mock you. They then throw you back in the room, and now you're back where you started. Damn.";
+        createStage(timeRemaining+" Minutes Left", stageText, "Understood", "StartGame2()", "", "");
+    }
+}
 
 function Surrendered1() {
     gameAreaFadeOut(); 

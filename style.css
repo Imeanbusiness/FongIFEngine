@@ -14,6 +14,7 @@ body {
    min-height: 100vh; /* fill viewport */
     margin: 0;
     background-color: white;
+    user-select: none;
 }
 
 .gameArea {
