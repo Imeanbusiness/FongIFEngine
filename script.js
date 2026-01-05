@@ -457,7 +457,7 @@ function MoveOnAlone() {
 }
 
 function HelpGuyVent() {
-    energy-=5;
+    energy-=15;
     party.push(James.name);
     dataParty.push(James);
     gameAreaFadeOut();
@@ -468,7 +468,7 @@ function HelpGuyVent() {
 }
 
 function GetEveryoneOutVent() {
-    energy-=2
+    energy-=10
     timeRemaining -= 20;
     document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
     stageText = newPar+"You scream into the room that you've found a way out. The crowd bolts in curiousity, and one by one, they make it out, and you help them. It's taken a significant amount of time, but you have gotten everyone out of the room! Now what do you do?";
@@ -477,7 +477,7 @@ function GetEveryoneOutVent() {
 }
 
 function ExploreFacility() {
-    energy-=5;
+    energy-=10;
     timeRemaining -= 3;
     stageText = newPar+"You don't have any time to waste. You run through the halls, and you hear the cries and panic of more people, but you are adamant on getting out of and away from the facility first. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you to do. What do you explore first?"
     if (party.includes("James")) {
@@ -489,7 +489,7 @@ function ExploreFacility() {
 }
 
 function ExploreWithOthers() {
-    energy-=5;
+    energy-=10;
     timeRemaining -= 10;
     party.push('Kelly')
     party.push('Viktor')
@@ -518,11 +518,11 @@ function TheOffice() {
         timeRemaining -= 2;
         document.getElementById("gameImage").src = "Images/Office.jpg";
         stageText = newPar+"It takes all the keycards you have, but you manage to get the door open. Inside, you see a flurry of guards... They all turn to you and point their guns at you. Just as it seems like your end, the man in the suit walks in. He looks at you, and then at the guards. He signals them to lower their weapons. He walks up to you and says, \n\n" + newPar+`"Impressive. You've managed to get this far. But you are not supposed to be here. I will grant you one last chance. All you have to do is press the button. Only one makes it out alive. And you will have all the luxury and power you want in this world."\n\n`+ newPar+"You consider his offer. It seems tempting...";
-        if (karma < -20) {
+        if (karma < -30) {
             stageText = newPar+"It takes all the keycards you have, but you manage to get the door open. Inside, you see a flurry of guards... They all turn to you and point their guns at you. Just as it seems like your end, the man    in the suit walks in. He looks at you, and then at the guards. He signals them to lower their weapons. He walks up to you and says, \n\n"+newPar+`"Impressive. You've managed to get this far. But I cannot allow you to leave. You see, you were never meant to make it this far. You will not be leaving this facility alive."\n\n`+newPar+"The guards raise their guns at you. Before you can react, you feel a sharp pain in your side as a bullet pierces your skin...\n\nTHE END.";
             createStage("THE END", stageText, "", "");
         } else {
-            createStage(timeRemaining+" Minutes Left", stageText, "Press the button", "OfficeEnding()", "Refuse", "Resist()");
+            createStage(timeRemaining+" Minutes Left", stageText, "Press the button", "OfficeEnding()", "Refuse", "Resist()", "Question him", "OfficeQuestion()");
         }
     } else {
         timeRemaining -= 2;
@@ -531,6 +531,45 @@ function TheOffice() {
         //crossOutOption(4);
 
     }
+}
+
+function OfficeQuestion() {
+    //timeRemaining -= 1;
+    if (karma > 0) {
+        stageText = newPar+"You ask why he's doing this. He looks at you, amused.\n\n"+newPar+`"Why? Because I can! Because this world is nothing more than a cruel place where people run rampant. They take advantage of you. They sell you out. So I put my foot down. And this world, this world will learn. I am simply... A catalyst. And you are my experiment."\n\n`+newPar+"You feel disgusted by his words, but you don't say a word. Dried blood over the office floor. You know what he had done before. He had gotten his revenge. Now, you have to make a choice.";
+
+    } else {
+        stageText = newPar+"You ask why he's doing this. He looks at you, amused.\n\n"+newPar+`"Why? Because I can! Because this world is nothing more than a cruel place where people run rampant, run by cruel vermin, just like yourself! They take advantage of you. They only care about what they gain. So it's time for the world to learn. And you are my experiment."\n\n`+newPar+"You feel disgusted by his words, but you don't say a word. Now, you have to make a choice.";
+
+
+    }
+    createStage(timeRemaining+" Minutes Left", stageText, "Press the button", "OfficeEnding()", "Refuse", "Resist()");
+
+}
+
+function Resist() {
+    if (party.length == 1) {
+        if (items.includes("Gun")) {
+            stageText = newPar+"You refuse the offer, and look at James, giving him a nod. The man in the suit grunts, and signals to his guards. They raise their guns at you both. Before they can react, you whip out your gun and shoot a couple of the guards. James tackles the closet guard to him as you finish the rest of them off. Your gun is pointed at the man in the suit. James stands and approaches him as well. You feel fulfilled.\n\n"+newPar+`"It's over suit man! We have the high ground." But he laughs. He pulls out a grenade and pops the pin off.\n\n`+newPar+`"And here... we... go..." You move out of the way, but James is immobile, in shock. It's too late. The grenade blows. James is gone. You quickly dash to stop the timer from releasing the gas, but you are disappointed. You've saved them all... But is this what James would have wanted?\n\n`+"THE END.";
+
+        } else {
+            stageText = newPar+"You refuse the offer, and look at James, giving him a nod. The man in the suit grunts, and signals to his guards. They raise their guns at you both. Before you can react, you feel a sharp pain in your side as a bullet pierces your skin...\n\nTHE END.";
+
+        }
+    } else if (party.length > 1) {
+        stageText = newPar+"You refuse the offer, and look at your party, giving them a nod. The man in the suit grunts, and signals to his guards. They raise their guns at you all. Before they can react, your party springs into action. You each take a guard or two down, and in quick succession, you've knocked them all out. In the chaos, you manage to pin the man in the suit down. Kelly picks up the gun, and without saying a word, shoots him in the head. You feel fulfilled.\n\nYou quickly dash to stop the timer from releasing the gas, and you feel fulfilled. You've saved them all... And now, he will never be able to hurt anyone again.\n\nTHE END.";
+    } else {
+        if (karma > -20) {
+            stageText = newPar+"You refuse the offer. The man in the suit laughs mockingly.\n\n"+newPar+`"You think you can just refuse me? You think you can just walk away from this? Guards, take him out."\n\n`+"The guards raise their guns at you. Before you can react, you feel a sharp pain in your side as a bullet pierces your skin...\n\nTHE END.";
+        } else {
+            if (items.includes("Gun")) {
+                stageText = newPar+"You refuse the offer, and the man in the suit grunts, and signals to his guards. They raise their guns at you. Before they can react, you whip out your gun and shoot a couple of the guards. You tackle the closest guard to you as you finish the rest of them off. Your gun is pointed at the man in the suit as he backs off. You feel fulfilled.\n\n"+newPar+`"It's over suit man! I have the high ground." But he laughs. He pulls out a grenade and pops the pin off.\n\n`+newPar+`"And here... we... go..." You're stuck, in shock. You can't will yourself to move. BLAM! The Grenade blows, but you've survived... barely. You crawl towards the button to stop the gas from releaing. You feel your insides spilling out. And with the last bit of energy you have, you press the button. You've saved them all. You smile as you lay on the ground, as your vision fades...\n\n`+"THE END.";
+            } else {
+                stageText = newPar+"You refuse the offer. The man in the suit grunts.\n\n"+newPar+`"It didn't have to end like this."\n\n`+"The guards raise their guns at you. Before you can react, you feel a sharp pain in your side as a bullet pierces your skin...\n\nTHE END.";
+            }
+        }
+    }
+    createStage("THE END", stageText, "", "");
 }
 
 function OfficeEnding() {
@@ -553,11 +592,12 @@ function GarageStart() {
 }
 
 function ExplainGarage() {
-    stageText = newPar+"The garage is dark and dusty. The garage seems to be mostly empty, but there could be something useful here. The Garage door seems to be stuck, maybe it can be fixed somehow... The other door is locked tight and doesn't seem to accept digital keycards. You wonder what his could have been used for...";
+    stageText = newPar+"The garage is dark and dusty. The garage seems to be mostly empty, but there could be something useful here. The Garage door seems to be stuck, maybe it can be fixed somehow... The other door is locked tight and doesn't seem to accept digital keycards. You notice a picture on the wall. The man in the suit... with a group of workers? what could he be doing on there? You wonder what his could have been used for...";
     createStage(timeRemaining+" Minutes Left",stageText,"Understood","GarageStart()");
 }
 
 function FixGarageDoor() {
+    energy-=5;
     if (items.includes("Old Tool")) {
         fixedGarageDoor = true;
         timeRemaining -= 4;
@@ -593,9 +633,11 @@ function GarageEnding() {
             stageText = newPar+"You make your way through the tunnels. After a while of walking, you see a light up ahead. But just as you are about to escape, the tunnels collapse in on you... so close, yet so far...\n\nTHE END.";
         }
     }
+    createStage("THE END", stageText, "", "");
 }
 
 function TryGarageDoor() {
+    energy-=5;
     if (items.includes("Strange Key")) {
         garageDoor1 = true;
         timeRemaining -= 3;
@@ -651,12 +693,13 @@ function PlantStart() {
 }
 
 function ExplainPlant() {
-    stageText = newPar+"The plant reeks of something horrible. It smells like something died here. There seems to be some kind of container that can be opened, but it's completely locked. The valves on the pipes can be turned, and are connected to the container. The room is dark as hell, so you wouldn't imagine it'd be very easy to find what you need."
+    stageText = newPar+"The plant reeks of something horrible. It smells like something died here. There seems to be some kind of container that can be opened, but it's completely locked. The valves on the pipes can be turned, and are connected to the container. The room is dark as hell, so you wouldn't imagine it'd be very easy to find what you need. From the smell of it, it seems like this was used to make something dangerous..."
     createStage(timeRemaining+" Minutes Left",stageText,"Understood","PlantStart()", "", "");
 }
 
 function TryPlantDoor() {
     let canOpen = false;
+    energy-=5;
     triedplant = true;
     document.getElementById("gameImage").src = "Images/Plant.jpg";
     try {
@@ -700,6 +743,7 @@ function TryPlantDoor() {
 
 function InvestigatePlant() {
     triedplant2 = true;
+    energy-=5
     timeRemaining -= 5 - (party.length)
     if (party.length != 0) {
         items.push("Strange Key");
@@ -743,7 +787,7 @@ function AssemblyLineStart() {
 }
 
 function ExplainAssemblyLine() {
-    stageText = newPar+"The lighting isn't great, but at least you can see. The assembly line seems to have been abandoned for at least a few years... You're not sure what this used to be, but you know that this was definitely something else before it was turned into whatever death game you are in right now. There's a pile of debris. Maybe there's a way out through there? The machinery is also a point of interest. There's a lso a room that seems to be the control room. Could that help you somehow?"
+    stageText = newPar+"The lighting isn't great, but at least you can see. The assembly line seems to have been abandoned for at least a few years... You're not sure what this used to be, but you know that this was definitely something else before it was turned into whatever death game you are in right now. There's a pile of debris. Maybe there's a way out through there? The machinery is also a point of interest. There's a name at the top of the wall. Lenmer. Sounds familiar... There's also a room that seems to be the control room. Could that help you somehow?"
     createStage(timeRemaining+" Minutes Left",stageText,"Understood","AssemblyLineStart()", "", "");
 }
 
@@ -760,6 +804,7 @@ function ExploreMachinery() {
         //canOpen = false;
     }
     energy -= 5;
+    HP-=5
     timeRemaining -= (7);
     if (intelligence >= 5) {
         stageText = newPar+"You jump into the middle of the room, in the middle of all the machinery. It's hard to tell how to do any of this stuff, but you use your wit and you start rummaging through the ruins... You find an old tool! You pocket it for later."
@@ -776,15 +821,21 @@ function ExploreMachinery() {
 function ExploreDebris() {
     debris = true;
     timeRemaining-=3;
-    AssemblyPower = true;
     if (party.length >= 1) {
+        AssemblyPower = true;
         stageText = newPar+"You and your team find your way through the deris in the assembly line, but James ends up falling through an unexpected crack! He can't get himself out, and is caught in some machinery. You'll need to get him out, fast. Helping him can be dangerous. What do you do?"
         createStage(timeRemaining+" Minutes Left", stageText, "Help him out", "HelpJames()", "Move On", "DontHelpJames()");
     } else {
         timeRemaining-=2;
-        HP-=40;
-        energy-=10;
-        stageText = newPar+"You find your way through the deris in the assembly line, but you end up falling through an unexpected crack! It hurts like hell, but you get yourself out of there. You're lucky not to have gotten trapped. You discover a dislodged power rail and plug it back in! The room lights up a bit...";
+        HP-=50;
+        energy-=20;
+        if (strength >= 5) {
+            AssemblyPower = true;
+            stageText = newPar+"You find your way through the deris in the assembly line, but you end up falling through an unexpected crack! It hurts like hell, but you get yourself out of there. You're lucky not to have gotten trapped. You discover a dislodged power rail and plug it back in! The room lights up a bit...";
+        } else {
+            stageText = newPar+"You find your way through the deris in the assembly line, but you end up falling through an unexpected crack! It hurts like hell, but you get yourself out of there. You're lucky not to have gotten trapped. You barely crawl out alive, and feel exhausted. You don't wanna go back there.";
+            
+        }
         createStage(timeRemaining+" Minutes Left", stageText, "Continue", "AssemblyLineStart()");
     }
 }
@@ -873,6 +924,7 @@ function AssemblyEnding() {
 
 function BreakOthersOut() {
     karma+=20;
+    energy-=5;
     gameAreaFadeOut();
     if (techSkills==true) {
         timeRemaining -= 4;
@@ -899,6 +951,7 @@ function TalkOthers() {
     gameAreaFadeOut();
     talkedOthers = true;
     timeRemaining -= 3;
+    energy-=5;
     if (charisma >= 6) {
         timeRemaining -= 2;
         stageText = newPar+"You approach a few people and start talking to them. They seem scared, but you manage to calm them down. While the others freak out, the group of you check around the room for a solution. After a few minutes of searching, one of the people finds some text engraved on the wall. It seems to be a clue. There's a keypad to enter a code that can open the door. There's a safe in the corner of the room. After some debating, you've concluded on what the code could be. What do you do now?";
@@ -969,7 +1022,7 @@ function explainSuit() {
 }
 
 function FightGuards() {
-    energy -= 10;
+    energy -= 20;
     gameAreaFadeOut();
     foughtGuards = true;
     timeRemaining -= 1;
@@ -978,7 +1031,7 @@ function FightGuards() {
         stageText = newPar+"You tackle one of the guards, catching him off guard. The door slams shut as the other guard turns to help fight you off, but you quickly knock him to the ground as you bash your hands into the first guard's face. The second guard calls for help, and you can hear footsteps running towards you. Shit. You think there are about 4 more on their way, and you need to act fast. What do you do now?";
         createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "FightGuards2()", "Run", "ExploreFacility()", "Surrender", "Surrendered1()");
     } else {
-        HP-=10; 
+        HP-=20; 
          items.push("Keycard LVL 1");
         stageText = newPar+"You tried to tackle one of the guards, but you were promptly attacked by both guards. It hurts like hell, and you're stuck in the same situation you were a minute a go. Dammit. At least you managed to steal a Keycard LVL 1 from one of them. What do you do now?";
         createStage(timeRemaining+" Minutes Left", stageText, "Man in the Suit?", "explainSuit()", "Fight", "FightGuards()", "Wait and find a way out", "Vent()", "Talk to others", "TalkOthers()"); 
@@ -1008,7 +1061,7 @@ function FightGuards2() {
 
 function Surrendered1() {
     gameAreaFadeOut(); 
-    HP-=10;
+    HP-=20;
     items.push("Keycard LVL 1");
     stageText = newPar+"You put your hands behind your head and the guards roughed you up. You put your hands up to block the hits, and snagged a keycard from one of the guards while doing so. They then throw you back in the room, and now you're back where you started. Damn.";
     createStage(timeRemaining+" Minutes Left", stageText, "Understood", "StartGame2()", "", "");

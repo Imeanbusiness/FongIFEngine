@@ -52,6 +52,7 @@ a {
 
 a:hover {
     cursor: pointer;
+    color: lightblue;
 }
 
 .rightStats {
