@@ -21,7 +21,7 @@ class character {
 
 let Player;
 let James = new character("James", 7, 4, 4, 5, 100, 80);
-let Kelly = new character("Kelly", 3, 3, 7, 7, 90, 90, true);
+let Kelly = new character("Kelly", 3, 8, 2, 7, 90, 90, true);
 let Viktor = new character("Viktor", 10, 0, 5, 5, 100, 50)
 
 
@@ -46,6 +46,10 @@ let machinery = false;
 let debris = false;
 let AssemblyPower = false;
 let AssemblyDoor = false;
+let garageDoor1 = false;
+let fixedGarageDoor = false;
+let garageDoor2 = false;
+let checkedGarage = false;
 
 let viewmode = "light";
 
@@ -134,11 +138,29 @@ function createStage(titleName, stageDesc, opt1, opt1Choice, opt2 = "", opt2Choi
     if (HP < 0) {
         HP = 0;
         if (gamePlaying) {
-            createStage("THE END", newPar+"You feel weak, and your body can't handle this anymore... Your body hurts like hell, and you collapse to the ground. Your vision is fading...", "", "");
+            document.getElementById("gameImage").src = "Images/Death.png";
+            gamePlaying = false;
+            createStage("THE END", newPar+"You feel weak, and your body can't handle this anymore... Your body hurts like hell, and you collapse to the ground. Your vision is fading...\n\nGAME OVER.", "", "");
+            return;
         }
     }
     if (energy < 0) {
         energy = 0;
+        if (gamePlaying) {
+            document.getElementById("gameImage").src = "Images/Collapse.jpg";
+            gamePlaying = false;
+            createStage("THE END", newPar+"You feel weak, and your body can't handle this anymore... You don't have the strength to continue. You collapse to the ground. Your vision is fading, and you have failed...\n\nGAME OVER.", "", "");
+            return;
+        }
+    }
+    if (timeRemaining <= 0) {
+        
+        if (gamePlaying) {
+            document.getElementById("gameImage").src = "Images/Death.png";
+            gamePlaying = false;
+            createStage("THE END", newPar+"You hear some hissing. The gas comes out, and you can feel your breath being taken away. You collapse to the ground. You've run out of time...\n\nGAME OVER.", "", "");
+            return;
+        }
     }
     document.getElementById("HP").innerHTML = "HP: " + HP+" / 100";
     document.getElementById("Energy").innerHTML = "Energy: " + energy+" / 100";
@@ -493,6 +515,15 @@ function ExploreWithOthers() {
 function TheOffice() {
     triedOffice = true 
     if (items.includes("Keycard LVL 1") && items.includes("Keycard LVL 2") && items.includes("Keycard LVL 3")) {
+        timeRemaining -= 2;
+        document.getElementById("gameImage").src = "Images/Office.jpg";
+        stageText = newPar+"It takes all the keycards you have, but you manage to get the door open. Inside, you see a flurry of guards... They all turn to you and point their guns at you. Just as it seems like your end, the man in the suit walks in. He looks at you, and then at the guards. He signals them to lower their weapons. He walks up to you and says, \n\n" + newPar+`"Impressive. You've managed to get this far. But you are not supposed to be here. I will grant you one last chance. All you have to do is press the button. Only one makes it out alive. And you will have all the luxury and power you want in this world."\n\n`+ newPar+"You consider his offer. It seems tempting...";
+        if (karma < -20) {
+            stageText = newPar+"It takes all the keycards you have, but you manage to get the door open. Inside, you see a flurry of guards... They all turn to you and point their guns at you. Just as it seems like your end, the man    in the suit walks in. He looks at you, and then at the guards. He signals them to lower their weapons. He walks up to you and says, \n\n"+newPar+`"Impressive. You've managed to get this far. But I cannot allow you to leave. You see, you were never meant to make it this far. You will not be leaving this facility alive."\n\n`+newPar+"The guards raise their guns at you. Before you can react, you feel a sharp pain in your side as a bullet pierces your skin...\n\nTHE END.";
+            createStage("THE END", stageText, "", "");
+        } else {
+            createStage(timeRemaining+" Minutes Left", stageText, "Press the button", "OfficeEnding()", "Refuse", "Resist()");
+        }
     } else {
         timeRemaining -= 2;
         stageText = newPar+"You waste no time and run up the stairs. This is probably where that man is hiding. The door is made of steel, and there seems to be no way in. There's a keycard slot to tap, but it doesn't seem to be like the others... It's more complex, and much sturdier. 3 different locks. Maybe you should try it later. You return to the lobby. What do you explore?";
@@ -501,13 +532,94 @@ function TheOffice() {
 
     }
 }
+
+function OfficeEnding() {
+    stageText = newPar+"You press the button. The gas starts to fill the rooms of the pople you once were with. You watch as they all collapse to the ground, lifeless. What have you done? You hear his voice behind you.\n\n"+newPar+`"Good."\n\n`+newPar+"...You walk out of the facility, excited by your new wealth, but haunted by your actions. You have survived... Or have you? His gun points right at your head. You have failed.\n\nTHE END.";
+    createStage("THE END", stageText, "", "");
+}
+
+
 function GarageStart() {
     timeRemaining -= 1;
     document.getElementById("gameImage").src = "Images/DarkGarage.webp";
     stageText = newPar+"You enter the garage. It's dark, and you can barely see anything. There seems to be a few cars here, but they look old and abandoned. There is a door that seems to lead somewhere else, but it's locked. You could try to force it open, but it might take a while. There is a large garage door that could lead somewhere else... Or you could look around the garage for clues. What do you do?";
-    createStage(timeRemaining+" Minutes Left",stageText,"The garage?", "ExplainGarage()", "Investigate the door", "TryGarageDoor()", "Look around the garage", "InvestigateGarage()", "Return to the lobby", "Try Garage Door", "FixGarageDoor()", "ReturnToLobby()")
+    createStage(timeRemaining+" Minutes Left",stageText,"The garage?", "ExplainGarage()", "Investigate the door", "TryGarageDoor()", "Look around the garage", "InvestigateGarage()", "Try fixing the garage door", "FixGarageDoor()", "Return to the lobby", "ReturnToLobby()")
+    if (garageDoor1) {
+        crossOutOption(2);
+    }
+    if (checkedGarage) {
+        crossOutOption(3);
+    }
 }
 
+function ExplainGarage() {
+    stageText = newPar+"The garage is dark and dusty. The garage seems to be mostly empty, but there could be something useful here. The Garage door seems to be stuck, maybe it can be fixed somehow... The other door is locked tight and doesn't seem to accept digital keycards. You wonder what his could have been used for...";
+    createStage(timeRemaining+" Minutes Left",stageText,"Understood","GarageStart()");
+}
+
+function FixGarageDoor() {
+    if (items.includes("Old Tool")) {
+        fixedGarageDoor = true;
+        timeRemaining -= 4;
+        if (items.includes("Keycard LVL 1") || items.includes("Keycard LVL 2") || items.includes("Keycard LVL 3")) {
+            stageText = newPar+"You use the old tool you found earlier to fix the garage door. After a while of tinkering, you manage to get it open! The door seems to be functioning now, but it closes on you. You whip out your keycard and try it to open the door, And voila, it does! It seems to lead to some tunnels, and you can see a faint and distant light up ahead. It's a way out! You can leave now, or continue exploring.";
+            createStage(timeRemaining+" Minutes Left",stageText,"Leave", "GarageEnding()", "Continue exploring", "GarageStart()");
+        } else {
+            stageText = newPar+"You use the old tool you found earlier to fix the garage door. After a while of tinkering, you manage to get it open! The door seems to be functioning now, but it closes on you. However, it seems to be locked again, needing a keycard to open it. Damn..."
+            createStage(timeRemaining+" Minutes Left",stageText,"Continue", "GarageStart()");
+        }
+    } else {
+        timeRemaining -= 2;
+        stageText = newPar+"You inspect the garage door, but you don't have the tools to fix it. It seems to be stuck pretty badly. You head back out.";
+        createStage(timeRemaining+" Minutes Left",stageText,"Continue", "GarageStart()");
+    }
+}
+
+function GarageEnding() {
+    if (party.length == 1) {
+        if (brokeOthersOut) {
+            stageText = newPar+"You and James make your way through the tunnels. After a while of walking, you see a light up ahead. You emerge from the tunnels, and find yourself outside. You've made it out! You and your party have survived the ordeal, but at what cost? You look back at the facility, now far behind you. You have escaped... But what of those who didn't?\n\nTHE END.";
+        } else {
+            stageText = newPar+"You gather everyone after running through the facility,and you all make your way through the tunnels. After a while of walking, you see a light up ahead. You emerge from the tunnels, and find yourself outside. You've made it out! You've survived the ordeal! You look back at the facility, now far behind you. You have escaped... And you never want to look back.\n\nTHE END.";
+        }
+    } else if (party.length > 1) {
+            stageText = newPar+"You gather everyone after running through the facility,and you all make your way through the tunnels. After a while of walking, you see a light up ahead. You emerge from the tunnels, and find yourself outside. You've made it out! You've survived the ordeal! You look back at the facility, now far behind you. You have escaped... And you never want to look back.\n\nTHE END.";
+
+    } else {
+        if (karma > -10) {
+            stageText = newPar+"You make your way through the tunnels. After a while of walking, you see a light up ahead. You emerge from the tunnels, and find yourself outside. You've made it out! You and your party have survived the ordeal, but at what cost? You look back at the facility, now far behind you. You have escaped... But what of those who didn't?\n\nTHE END.";
+            
+        } else {
+            stageText = newPar+"You make your way through the tunnels. After a while of walking, you see a light up ahead. But just as you are about to escape, the tunnels collapse in on you... so close, yet so far...\n\nTHE END.";
+        }
+    }
+}
+
+function TryGarageDoor() {
+    if (items.includes("Strange Key")) {
+        garageDoor1 = true;
+        timeRemaining -= 3;
+        stageText = newPar+"You try to open the door, but it's locked tight. So, you try the strange key you found in the plant, and to your surprise, it fits! You open the door and find an old storage room. There is a keycard LVL 2 on the table. You take it and head back to the garage.";
+        items.push("Keycard LVL 2");
+        createStage(timeRemaining+" Minutes Left",stageText,"Continue","GarageStart()");
+    } else {
+        timeRemaining -= 2;
+        stageText = newPar+"You try to open the door, but it's locked tight. There doesn't seem to be any other way into the little room. You head back out.";
+        createStage(timeRemaining+" Minutes Left",stageText,"Continue","GarageStart()");
+    }
+}
+
+function InvestigateGarage() {
+    timeRemaining -= (3);
+    checkedGarage = true;
+    if (items.includes("Gun")) {
+        stageText = newPar+"You look through the garage, but there doesn't seem to be much useful here. There are a few old cars, but they look like they haven't been used in years. You rummage through some debris, but you don't find anything new.";
+    } else {
+        items.push("Gun");
+        stageText = newPar+"You look through the garage, but there doesn't seem to be much useful here. There are a few old cars, but they look like they haven't been used in years. You rummage through some debris, and find a gun! Maybe this could prove to be useful later. You pocket it.";
+    }
+    createStage(timeRemaining+" Minutes Left",stageText,"Continue","GarageStart()");
+}
 
 function PlantStart() {
     
@@ -556,7 +668,7 @@ function TryPlantDoor() {
     } catch (e) {
         //canOpen = false;
     }
-    if (canOpen && techSkills) {
+    if (canOpen) {
         timeRemaining -= 4
         items.push('Keycard LVL 3');
         stageText = newPar+"It takes you a while, but after a while of working, and thanks to some help from Kelly, you've broken open the door, and you now have access to a control room. You don't think you were supposed to be here, but the controls don't seem to do anything. There's a Keycard LVL 3 on the table, so you decide to snag it. Now what?"
@@ -564,6 +676,15 @@ function TryPlantDoor() {
         crossOutOption(2);
         if (triedplant2) {
              crossOutOption(3);
+        }
+    } else if (techSkills) {
+        timeRemaining -= 7
+        items.push('Keycard LVL 3');
+        stageText = newPar+"It takes you a while, but after a while of working, you've broken open the door, and you now have access to a control room. You don't think you were supposed to be here, but the controls don't seem to do anything. There's a Keycard LVL 3 on the table, so you decide to snag it. Now what?"
+        createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
+        crossOutOption(2);
+        if (triedplant2) {
+            crossOutOption(3);
         }
     } else {
         timeRemaining -= 2
@@ -778,7 +899,7 @@ function TalkOthers() {
     gameAreaFadeOut();
     talkedOthers = true;
     timeRemaining -= 3;
-    if (charisma >= 5) {
+    if (charisma >= 6) {
         timeRemaining -= 2;
         stageText = newPar+"You approach a few people and start talking to them. They seem scared, but you manage to calm them down. While the others freak out, the group of you check around the room for a solution. After a few minutes of searching, one of the people finds some text engraved on the wall. It seems to be a clue. There's a keypad to enter a code that can open the door. There's a safe in the corner of the room. After some debating, you've concluded on what the code could be. What do you do now?";
         createStage(timeRemaining+" Minutes Left", stageText, "Try opening the safe", "TrySafe()", "Try opening the door", "TryDoor()", "Look for another way", "Vent()");
@@ -858,7 +979,8 @@ function FightGuards() {
         createStage(timeRemaining+" Minutes Left", stageText, "Keep Fighting", "FightGuards2()", "Run", "ExploreFacility()", "Surrender", "Surrendered1()");
     } else {
         HP-=10; 
-        stageText = newPar+"You tried to tackle one of the guards, but you were promptly attacked by both guards. It hurts like hell, and you're stuck in the same situation you were a minute a go. Dammit. What do you do now?";
+         items.push("Keycard LVL 1");
+        stageText = newPar+"You tried to tackle one of the guards, but you were promptly attacked by both guards. It hurts like hell, and you're stuck in the same situation you were a minute a go. Dammit. At least you managed to steal a Keycard LVL 1 from one of them. What do you do now?";
         createStage(timeRemaining+" Minutes Left", stageText, "Man in the Suit?", "explainSuit()", "Fight", "FightGuards()", "Wait and find a way out", "Vent()", "Talk to others", "TalkOthers()"); 
         crossOutOption(2);
     }
