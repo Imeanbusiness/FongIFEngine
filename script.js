@@ -34,6 +34,7 @@ let charisma = 0;
 let creativity = 0;
 
 let techSkills = false;
+let gamePlaying = true;
 let talkedOthers = false;
 let brokeOthersOut = false;
 let triedOffice = false;
@@ -44,6 +45,7 @@ let triedplant2 = false;
 let machinery = false;
 let debris = false;
 let AssemblyPower = false;
+let AssemblyDoor = false;
 
 let viewmode = "light";
 
@@ -131,6 +133,9 @@ function createStage(titleName, stageDesc, opt1, opt1Choice, opt2 = "", opt2Choi
     console.log(dataParty);
     if (HP < 0) {
         HP = 0;
+        if (gamePlaying) {
+            createStage("THE END", newPar+"You feel weak, and your body can't handle this anymore... Your body hurts like hell, and you collapse to the ground. Your vision is fading...", "", "");
+        }
     }
     if (energy < 0) {
         energy = 0;
@@ -487,15 +492,22 @@ function ExploreWithOthers() {
 
 function TheOffice() {
     triedOffice = true 
-    if (items.includes("Master Keycard")) {
+    if (items.includes("Keycard LVL 1") && items.includes("Keycard LVL 2") && items.includes("Keycard LVL 3")) {
     } else {
         timeRemaining -= 2;
-        stageText = newPar+"You waste no time and run up the stairs. This is probably where that man is hiding. The door is made of steel, and there seems to be no way in. There's a keycard slot to tap, but it doesn't seem to be like the others... It's more complex, and much sturdier. Maybe you should try it later. You return to the lobby. What do you explore?";
+        stageText = newPar+"You waste no time and run up the stairs. This is probably where that man is hiding. The door is made of steel, and there seems to be no way in. There's a keycard slot to tap, but it doesn't seem to be like the others... It's more complex, and much sturdier. 3 different locks. Maybe you should try it later. You return to the lobby. What do you explore?";
         createStage(timeRemaining+" Minutes Left", stageText, "The Plant", "PlantStart()", "The Assembly Line", "AssemblyLineStart()", "The Garage", "GarageStart()", "The Office", "TheOffice()")
         //crossOutOption(4);
 
     }
 }
+function GarageStart() {
+    timeRemaining -= 1;
+    document.getElementById("gameImage").src = "Images/DarkGarage.webp";
+    stageText = newPar+"You enter the garage. It's dark, and you can barely see anything. There seems to be a few cars here, but they look old and abandoned. There is a door that seems to lead somewhere else, but it's locked. You could try to force it open, but it might take a while. There is a large garage door that could lead somewhere else... Or you could look around the garage for clues. What do you do?";
+    createStage(timeRemaining+" Minutes Left",stageText,"The garage?", "ExplainGarage()", "Investigate the door", "TryGarageDoor()", "Look around the garage", "InvestigateGarage()", "Return to the lobby", "Try Garage Door", "FixGarageDoor()", "ReturnToLobby()")
+}
+
 
 function PlantStart() {
     
@@ -550,11 +562,17 @@ function TryPlantDoor() {
         stageText = newPar+"It takes you a while, but after a while of working, and thanks to some help from Kelly, you've broken open the door, and you now have access to a control room. You don't think you were supposed to be here, but the controls don't seem to do anything. There's a Keycard LVL 3 on the table, so you decide to snag it. Now what?"
         createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
         crossOutOption(2);
+        if (triedplant2) {
+             crossOutOption(3);
+        }
     } else {
         timeRemaining -= 2
         stageText = newPar+"No matter how hard you tried, you couldn't break it open. There is still stuff to do in the plant. Now what?"
         createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
         crossOutOption(2);
+        if (triedplant2) {
+            crossOutOption(3);
+        }
     }
     
 }
@@ -565,15 +583,15 @@ function InvestigatePlant() {
     if (party.length != 0) {
         items.push("Strange Key");
         stageText = newPar+"You and your party began to look around the plant for some clues. It's dark, so hands are against the wall...  All of a sudden, James claimed to have found some numbers on the wall! You notice a row of valves that can be adjusted, which are also connected to the pipes. You input the code, and a hatch opens. You got a strange key..."
-        createStage(timeRemaining+" Minutes Left", stageText, "Continue", "ReturnToLobby()")
+        createStage(timeRemaining+" Minutes Left", stageText, "Continue", "PlantStart()")
     } else {
         if (creativity >= 5) {
             items.push("Strange Key");
             stageText = newPar+"You began to look around the plant for some clues. It's dark, so you put your hands against the wall and feel some writing... It's hard to deduce, but it's a set of numbers. 48, 30, 54.  You notice a row of valves that can be adjusted, which are also connected to the pipes. You input the code, and a hatch opens. You got a strange key..."
-            createStage(timeRemaining+" Minutes Left", stageText, "Continue", "ReturnToLobby()");
+            createStage(timeRemaining+" Minutes Left", stageText, "Continue", "PlantStart()");
         } else {
             stageText = newPar+"You searched... And you searched... And you searched. But you couldn't find anything. There were a set of numbers on the wall, but you were unsure of what to use them for."
-            createStage(timeRemaining+" Minutes Left", stageText, "Continue", "ReturnToLobby()");
+            createStage(timeRemaining+" Minutes Left", stageText, "Continue", "PlantStart()");
         }
 
     }
@@ -639,13 +657,13 @@ function ExploreDebris() {
     timeRemaining-=3;
     AssemblyPower = true;
     if (party.length >= 1) {
-        stageText = "You and your team find your way through the deris in the assembly line, but James ends up falling through an unexpected crack! He can't get himself out, and is caught in some machinery. You'll need to get him out, fast. Helping him can be dangerous. What do you do?"
+        stageText = newPar+"You and your team find your way through the deris in the assembly line, but James ends up falling through an unexpected crack! He can't get himself out, and is caught in some machinery. You'll need to get him out, fast. Helping him can be dangerous. What do you do?"
         createStage(timeRemaining+" Minutes Left", stageText, "Help him out", "HelpJames()", "Move On", "DontHelpJames()");
     } else {
         timeRemaining-=2;
         HP-=40;
         energy-=10;
-        stageText = "You find your way through the deris in the assembly line, but you end up falling through an unexpected crack! It hurts like hell, but you get yourself out of there. You're lucky not to have gotten trapped. You discover a dislodged power rail and plug it back in! The room lights up a bit...";
+        stageText = newPar+"You find your way through the deris in the assembly line, but you end up falling through an unexpected crack! It hurts like hell, but you get yourself out of there. You're lucky not to have gotten trapped. You discover a dislodged power rail and plug it back in! The room lights up a bit...";
         createStage(timeRemaining+" Minutes Left", stageText, "Continue", "AssemblyLineStart()");
     }
 }
@@ -657,7 +675,7 @@ function HelpJames() {
     chance = Math.floor(Math.random() * items.length)
     let itemLost = items[chance];
     items.splice(chance, 1);
-    stageText = "It's tricky, but you reach your hand out for James to grab. You get him out of there before he bleeds out. Unfortunately, you dropped your "+itemLost+" in the process, but you discover a dislodged power rail and plug it back in! The room lights up a bit..."
+    stageText = newPar+"It's tricky, but you reach your hand out for James to grab. You get him out of there before he bleeds out. Unfortunately, you dropped your "+itemLost+" in the process, but you discover a dislodged power rail and plug it back in! The room lights up a bit..."
     createStage(timeRemaining+" Minutes Left", stageText, "Continue", "AssemblyLineStart()");
 }
 
@@ -668,21 +686,67 @@ function DontHelpJames() {
     chance = party.indexOf("James");
     party.splice(chance, 1);
     dataParty.splice(chance, 1);
-    stageText = "You tell James that you're sorry... his struggles fade as you discover a dislodged power rail and plug it back in. The room lights up a bit..."
+    stageText = newPar+"You tell James that you're sorry... his struggles fade as you discover a dislodged power rail and plug it back in. The room lights up a bit..."
     createStage(timeRemaining+" Minutes Left", stageText, "Continue", "AssemblyLineStart()");
 }
 
 function ExploreControlCenter() {
     timeRemaining -= 1;
+
+    if (AssemblyDoor) {
+        stageText = "You make your way to the control room again, and are close to the exit. Do you want to leave, or continue exploring the facility?";
+        createStage(timeRemaining+" Minutes Left", newPar+stageText, "Escape", "AssemblyEnding()", "Keep Exploring", "AssemblyLineStart()");
+    }
+
     if (AssemblyPower) {
         if (items.includes("Keycard LVL 2") || items.includes("Keycard LVL 3") || items.includes("Master Keycard")) {
             stageText = "You make your way to the control room, and the controls are on! There's an interface demanding for a LVL 2 Keycard, so you jam it in. The machinery powers on, and you see something opening up. The outside! You've just found a way out! Do you want to leave, or continue exploring the facility?"
-            timeRemaining-=
+            timeRemaining-=2;
+            AssemblyDoor = true;
+            createStage(timeRemaining+" Minutes Left", newPar+stageText, "Escape", "AssemblyEnding()", "Keep Exploring", "AssemblyLineStart()");
+        } else {   
+            stageText = "You make your way to the control room, and the controls are on! There's an interface demanding for a LVL 2 Keycard, but you don't have one. Maybe you should check it back later..."
+            timeRemaining-=1;
+            createStage(timeRemaining+" Minutes Left", newPar+stageText, "Continue", "AssemblyLineStart()");
+
+        }
+    } else {
+        stageText = "You make your way to the control room, but nothing's on... A power line seems to be leading to where the debris is. Maybe you'll come back later."
+        createStage(timeRemaining+" Minutes Left", newPar+stageText, "Continue", "AssemblyLineStart()");
+    }
+}
+
+function AssemblyEnding() {
+    document.getElementById("gameImage").src = "Images/AssemblyDoor.jpg";
+    if (party.length == 1) {
+        if (brokeOthersOut) {
+            stageText = newPar+"You gather everyone, and you've safely made it out alive! You don't know where you are, but at least you're safe. You look around, and see a road in the distance. You begin to walk towards it, hoping for the best. You've survived... and you have new friends to help you along the way.\n\nTHE END.";
+            createStage("THE END", stageText, "", "");
+        } else {
+            stageText = newPar+"You've safely made it out alive! You don't know where you are, but at least you're safe. You look around, and see a road in the distance. You begin to walk towards it, hoping for the best. You've survived, along with James... but at what cost? Was it worth it?\n\nTHE END.";
+            createStage("THE END", stageText, "", "");
+        }
+    } else if (party.length >= 1) {
+        if (brokeOthersOut) {
+            stageText = newPar+"You gather everyone, and you've safely made it out alive! You don't know where you are, but at least you're safe. You look around, and see a road in the distance. You begin to walk towards it, hoping for the best. You've survived... and you have new friends to help you along the way.\n\nTHE END.";
+            createStage("THE END", stageText, "", "");
         } else {
 
         }
     } else {
+        if (brokeOthersOut) {
+            stageText = newPar+"You gather everyone, and you've safely made it out alive! You don't know where you are, but at least you're safe. You look around, and see a road in the distance. You begin to walk towards it, hoping for the best. You've survived... and you have new friends to help you along the way.\n\nTHE END.";
+            createStage("THE END", stageText, "", "");
+        } else {
+            if (karma < 0) {
+                stageText = newPar+"You've safely made it out alive! ... but you don't know where you are, and don't know what to do. You look around, and see nothing around you. Those people you left behind... What you did to save your own skin... Did you really win?\n\nTHE END.";
+                createStage("THE END", stageText, "", "");
 
+            } else {
+                stageText = newPar+"You've safely made it out alive! You don't know where you are, but at least you're safe. You look around, and see a road in the distance. You begin to walk towards it, hoping for the best. You've survived... but at what cost?\n\nTHE END.";
+                createStage("THE END", stageText, "", "");
+            }
+        }
     }
 }
 
