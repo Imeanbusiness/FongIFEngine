@@ -50,6 +50,7 @@ let garageDoor1 = false;
 let fixedGarageDoor = false;
 let garageDoor2 = false;
 let checkedGarage = false;
+let legalEscape = true;
 
 let viewmode = "light";
 
@@ -458,6 +459,7 @@ function MoveOnAlone() {
 
 function HelpGuyVent() {
     energy-=15;
+    karma+=10
     party.push(James.name);
     dataParty.push(James);
     gameAreaFadeOut();
@@ -470,6 +472,7 @@ function HelpGuyVent() {
 function GetEveryoneOutVent() {
     energy-=10
     timeRemaining -= 20;
+    karma+=30
     document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
     stageText = newPar+"You scream into the room that you've found a way out. The crowd bolts in curiousity, and one by one, they make it out, and you help them. It's taken a significant amount of time, but you have gotten everyone out of the room! Now what do you do?";
     createStage(timeRemaining+" Minutes Left",stageText, "Try and break the others out", "BreakOthersOut()", "Explore on your own", "ExploreFacility()", "Explore with others", "ExploreWithOthers()");
@@ -478,7 +481,7 @@ function GetEveryoneOutVent() {
 
 function ExploreFacility() {
     energy-=10;
-    timeRemaining -= 3;
+    timeRemaining -= 10-strength;
     stageText = newPar+"You don't have any time to waste. You run through the halls, and you hear the cries and panic of more people, but you are adamant on getting out of and away from the facility first. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you to do. What do you explore first?"
     if (party.includes("James")) {
         stageText = newPar+"You don't have any time to waste. You run through the halls, bringing James, and you hear the cries and panic of more people, but you are adamant on getting out of and away from the facility first. There's no light. No sign of the outside. But you've made it to the center of the facility. There's a lot for you to do. What do you explore first?"
@@ -489,6 +492,7 @@ function ExploreFacility() {
 }
 
 function ExploreWithOthers() {
+    karma+=10
     energy-=10;
     timeRemaining -= 10;
     party.push('Kelly')
@@ -536,7 +540,7 @@ function TheOffice() {
 function OfficeQuestion() {
     //timeRemaining -= 1;
     if (karma > 0) {
-        stageText = newPar+"You ask why he's doing this. He looks at you, amused.\n\n"+newPar+`"Why? Because I can! Because this world is nothing more than a cruel place where people run rampant. They take advantage of you. They sell you out. So I put my foot down. And this world, this world will learn. I am simply... A catalyst. And you are my experiment."\n\n`+newPar+"You feel disgusted by his words, but you don't say a word. Dried blood over the office floor. You know what he had done before. He had gotten his revenge. Now, you have to make a choice.";
+        stageText = newPar+"You ask why he's doing this. He looks at you, amused.\n\n"+newPar+`"Why? Because I can! Because this world is nothing more than a cruel place where people run rampant. They take advantage of you. They sell you out. I had my own family oust me of my own project that I built! So I put my foot down. I got rid of them. Now it's my turn to shine. And this world, this world will learn. I am simply... A catalyst. And you are my experiment."\n\n`+newPar+"He laughs. You feel disgusted by his words, but you don't say a word. Dried blood over the office floor. You know what he had done before. He had gotten his revenge. Now, you have to make a choice.";
 
     } else {
         stageText = newPar+"You ask why he's doing this. He looks at you, amused.\n\n"+newPar+`"Why? Because I can! Because this world is nothing more than a cruel place where people run rampant, run by cruel vermin, just like yourself! They take advantage of you. They only care about what they gain. So it's time for the world to learn. And you are my experiment."\n\n`+newPar+"You feel disgusted by his words, but you don't say a word. Now, you have to make a choice.";
@@ -559,7 +563,7 @@ function Resist() {
     } else if (party.length > 1) {
         stageText = newPar+"You refuse the offer, and look at your party, giving them a nod. The man in the suit grunts, and signals to his guards. They raise their guns at you all. Before they can react, your party springs into action. You each take a guard or two down, and in quick succession, you've knocked them all out. In the chaos, you manage to pin the man in the suit down. Kelly picks up the gun, and without saying a word, shoots him in the head. You feel fulfilled.\n\nYou quickly dash to stop the timer from releasing the gas, and you feel fulfilled. You've saved them all... And now, he will never be able to hurt anyone again.\n\nTHE END.";
     } else {
-        if (karma > -20) {
+        if (karma < -20) {
             stageText = newPar+"You refuse the offer. The man in the suit laughs mockingly.\n\n"+newPar+`"You think you can just refuse me? You think you can just walk away from this? Guards, take him out."\n\n`+"The guards raise their guns at you. Before you can react, you feel a sharp pain in your side as a bullet pierces your skin...\n\nTHE END.";
         } else {
             if (items.includes("Gun")) {
@@ -655,10 +659,10 @@ function InvestigateGarage() {
     timeRemaining -= (3);
     checkedGarage = true;
     if (items.includes("Gun")) {
-        stageText = newPar+"You look through the garage, but there doesn't seem to be much useful here. There are a few old cars, but they look like they haven't been used in years. You rummage through some debris, but you don't find anything new.";
+        stageText = newPar+"You look through the garage, but there doesn't seem to be much useful here. There are a few old cars, but they look like they haven't been used in years. You rummage through some debris, and find a gun. You don't need it. Around the area, there is a distinct smell of rotting... Something happened. Recently.";
     } else {
         items.push("Gun");
-        stageText = newPar+"You look through the garage, but there doesn't seem to be much useful here. There are a few old cars, but they look like they haven't been used in years. You rummage through some debris, and find a gun! Maybe this could prove to be useful later. You pocket it.";
+        stageText = newPar+"You look through the garage, but there doesn't seem to be much useful here. There are a few old cars, but they look like they haven't been used in years. You rummage through some debris, and find a gun. It has a couple rounds loaded inside. Around the area, there is a distinct smell of rotting... Something happened. Recently. You pocket the gun.";
     }
     createStage(timeRemaining+" Minutes Left",stageText,"Continue","GarageStart()");
 }
@@ -666,34 +670,39 @@ function InvestigateGarage() {
 function PlantStart() {
     
     
-    let canOpen = false;
-
     document.getElementById("gameImage").src = "Images/Plant.jpg";
-    try {
-        for (i = 0; i < dataParty.length; i++) {
-            if (dataParty[i].techSkills == true) {
-                canOpen = true;
-            }
-        }
-    } catch (e) {
-        canOpen = false;
-    }
-    if (techSkills) {
-        canOpen = true;
-    }
+    
+
     timeRemaining-=1;
-    stageText = newPar+"You make your way to the plant. Maybe that's where the gas will be released. You arive to see large pipes, and a locked door with a keycard panel that looks hackable. Maybe that could lead somewhere important. But there is still a large amount that must be explored for clues. Or you could turn back."
-    createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
-    if (triedplant) {
-        crossOutOption(2);
+
+
+    if (party.length == 0 && strength < 3) {
+        stageText = newPar+"The door to the plant is not functioning as usual. You try to push it open, but it's stuck. You don't have the strength to force it open on your own. You return to the lobby.";
+        createStage(timeRemaining+" Minutes Left",stageText, "Continue", "ReturnToLobby()")
+
+    } else {
+
+        stageText = newPar+"You make your way to the plant. Maybe that's where the gas will be released. You arive to see large pipes, and a locked door with a keycard panel that looks hackable. Maybe that could lead somewhere important. But there is still a large amount that must be explored for clues. Or you could turn back."
+        createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
+        if (triedplant) {
+            crossOutOption(2);
+        }
+        if (triedplant2) {
+            crossOutOption(3);
+        }
     }
-    if (triedplant2) {
-        crossOutOption(3);
-    }
+
+
 }
 
 function ExplainPlant() {
-    stageText = newPar+"The plant reeks of something horrible. It smells like something died here. There seems to be some kind of container that can be opened, but it's completely locked. The valves on the pipes can be turned, and are connected to the container. The room is dark as hell, so you wouldn't imagine it'd be very easy to find what you need. From the smell of it, it seems like this was used to make something dangerous..."
+    stageText = newPar+"The plant reeks of something horrible. It smells like something died here. There seems to be some kind of container that can be opened, but it's completely locked. The valves on the pipes can be turned, and are connected to the container. The room is dark as hell, so you wouldn't imagine it'd be very easy to find what you need. From the smell of it, it seems like this was used to make something dangerous.";
+    if (job == "Farmer") {
+        stageText+= " You recognize the smell as chemicals used in some kind of wonder drug used to enchance crop growth. This company must have never intended to be using it for anything bad... What happened?"
+    }
+    if (job == "Soldier") {
+        stageText = "You recognize the smell as chemicals used in some kind of chemical weapon. You suspect that this is what will be released in the rooms later... You need to stop this."
+    }
     createStage(timeRemaining+" Minutes Left",stageText,"Understood","PlantStart()", "", "");
 }
 
@@ -714,7 +723,10 @@ function TryPlantDoor() {
     if (canOpen) {
         timeRemaining -= 4
         items.push('Keycard LVL 3');
-        stageText = newPar+"It takes you a while, but after a while of working, and thanks to some help from Kelly, you've broken open the door, and you now have access to a control room. You don't think you were supposed to be here, but the controls don't seem to do anything. There's a Keycard LVL 3 on the table, so you decide to snag it. Now what?"
+        stageText = newPar+"It takes you a while, but after a while of working, and thanks to some help from Kelly, you've broken open the door, and you now have access to a control room. You don't think you were supposed to be here, but the controls don't seem to do anything. There's a Keycard LVL 3 on the table, so you decide to snag it.\n\n"+newPar+"There are some documents on the table that you quicky take a glance at. This was a family owned facility that made special chemical goods... What could have gone wrong? you shudder at the thought. It seems like they were trying to make a new type of gas, but something went wrong. You suspect that something much more sinister occured here..."
+        if (job == "Businessman") {
+            stageText = "\n\n"+newPar+"You notice the man in a suit on a newspaper, about this company... Their stocks were dropping while they were still in power. Is this why you recognized him?"
+        }
         createStage(timeRemaining+" Minutes Left",stageText,"The plant?", "ExplainPlant()", "Try getting through the door", "TryPlantDoor()", "Investigate the plant", "InvestigatePlant()", "Return to the lobby", "ReturnToLobby()")
         crossOutOption(2);
         if (triedplant2) {
@@ -748,11 +760,17 @@ function InvestigatePlant() {
     if (party.length != 0) {
         items.push("Strange Key");
         stageText = newPar+"You and your party began to look around the plant for some clues. It's dark, so hands are against the wall...  All of a sudden, James claimed to have found some numbers on the wall! You notice a row of valves that can be adjusted, which are also connected to the pipes. You input the code, and a hatch opens. You got a strange key..."
+        if (techSkills) {
+                stageText += "\n\n"+newPar+"You recognize some of the stuff being produced in here. Deadly gases... Was this released on the people who used to work here? The facility must have been sabotaged from the inside.";
+            }
         createStage(timeRemaining+" Minutes Left", stageText, "Continue", "PlantStart()")
     } else {
         if (creativity >= 5) {
             items.push("Strange Key");
             stageText = newPar+"You began to look around the plant for some clues. It's dark, so you put your hands against the wall and feel some writing... It's hard to deduce, but it's a set of numbers. 48, 30, 54.  You notice a row of valves that can be adjusted, which are also connected to the pipes. You input the code, and a hatch opens. You got a strange key..."
+            if (techSkills) {
+                stageText += "\n\n"+newPar+"You recognize some of the stuff being produced in here. Deadly gases... Was this released on the people who used to work here? The facility must have been sabotaged from the inside.";
+            }
             createStage(timeRemaining+" Minutes Left", stageText, "Continue", "PlantStart()");
         } else {
             stageText = newPar+"You searched... And you searched... And you searched. But you couldn't find anything. There were a set of numbers on the wall, but you were unsure of what to use them for."
@@ -778,9 +796,9 @@ function AssemblyLineStart() {
     stageText = newPar+"The room right next to the lobby is the assembly line. It looks like it hasn't been used for years. It seems somewhat hazardous... But you still need to find some clues. The assembly line is large and needs to be explored. What do you do first?"
     
     createStage(timeRemaining+" Minutes Left", stageText, "The Assembly Line?", "ExplainAssemblyLine()", "Explore the Machinery", "ExploreMachinery()", "Explore the Debris", "ExploreDebris()", "Explore the Control Center", "ExploreControlCenter()","Return", "ReturnToLobby()")
-    if (machinery) {
+    /*if (machinery) {
         crossOutOption(2);
-    }
+    }*/
     if (debris) {
         crossOutOption(3);
     }
@@ -788,34 +806,47 @@ function AssemblyLineStart() {
 
 function ExplainAssemblyLine() {
     stageText = newPar+"The lighting isn't great, but at least you can see. The assembly line seems to have been abandoned for at least a few years... You're not sure what this used to be, but you know that this was definitely something else before it was turned into whatever death game you are in right now. There's a pile of debris. Maybe there's a way out through there? The machinery is also a point of interest. There's a name at the top of the wall. Lenmer. Sounds familiar... There's also a room that seems to be the control room. Could that help you somehow?"
+    if (job == "Farmer") {
+        stageText += " You recognize the name Lenmer as a big agricultural company that made chemicals for farming. What could have gone wrong?"
+    }
     createStage(timeRemaining+" Minutes Left",stageText,"Understood","AssemblyLineStart()", "", "");
 }
 
 function ExploreMachinery() {
     let canOpen = false;
-    machinery = true;
-    try {
-        for (i = 0; i < dataParty.length; i++) {
-            if (dataParty[i].intelligence >= 5) {
-                canOpen = true;
+    if (!machinery) {
+        machinery = true;
+        try {
+            for (i = 0; i < dataParty.length; i++) {
+                if (dataParty[i].intelligence >= 5) {
+                    canOpen = true;
+                }
             }
+        } catch (e) {
+            //canOpen = false;
         }
-    } catch (e) {
-        //canOpen = false;
-    }
-    energy -= 5;
-    HP-=5
-    timeRemaining -= (7);
-    if (intelligence >= 5) {
-        stageText = newPar+"You jump into the middle of the room, in the middle of all the machinery. It's hard to tell how to do any of this stuff, but you use your wit and you start rummaging through the ruins... You find an old tool! You pocket it for later."
-        items.push("Old Tool")
-    } else if (canOpen) {
-        stageText = newPar+"You jump into the middle of the room along with some teammates. It's hard to tell how to do any of this stuff, but you work together and start rummaging through the ruins... One of them finds an old tool! You pocket it for later."
-        items.push("Old Tool")
+        energy -= 5;
+        HP-=5
+        timeRemaining -= (7);
+        if (intelligence >= 5) {
+            stageText = newPar+"You jump into the middle of the room, in the middle of all the machinery. It's hard to tell how to do any of this stuff, but you use your wit and you start rummaging through the ruins... You find an old tool! You pocket it for later."
+            items.push("Old Tool")
+        } else if (canOpen) {
+            stageText = newPar+"You jump into the middle of the room along with some teammates. It's hard to tell how to do any of this stuff, but you work together and start rummaging through the ruins... One of them finds an old tool! You pocket it for later."
+            items.push("Old Tool")
+        } else {
+            stageText = newPar+"You jump into the middle of the room, in the middle of all the machinery. Nothing is making sense in this room, and you have no clue where to start... You spent some time rummaging through the machinery, but you found nothing"
+        }
+        if (techSkills) {
+            stageText += "\n\n"+newPar+"You notice that the machinery seems to only have been partially powered down. The conveyors lead to some kind of opening... These machines have only been nonfunctional for a short while.";
+        }
+        createStage(timeRemaining+" Minutes Left", stageText, "Continue", "AssemblyLineStart()", "", "")
+
     } else {
-        stageText = newPar+"You jump into the middle of the room, in the middle of all the machinery. Nothing is making sense in this room, and you have no clue where to start... You spent some time rummaging through the machinery, but you found nothing"
+        timeRemaining -= 2;
+        stageText = newPar+"You've been here before, but you still want to check around. You find a diary on the ground. It's old and worn out, but you can make out some words. It's bloody. It's from one of the workers here, who detailed the joy of originally working here. But the detail of their last moments... it seems as if the man in the suit had something to do with it. You shudder at the thought.";
+        createStage(timeRemaining+" Minutes Left", stageText, "Continue", "AssemblyLineStart()", "", "")
     }
-    createStage(timeRemaining+" Minutes Left", stageText, "Continue", "AssemblyLineStart()", "", "")
 }
 
 function ExploreDebris() {
@@ -868,7 +899,11 @@ function ExploreControlCenter() {
     if (AssemblyDoor) {
         stageText = "You make your way to the control room again, and are close to the exit. Do you want to leave, or continue exploring the facility?";
         createStage(timeRemaining+" Minutes Left", newPar+stageText, "Escape", "AssemblyEnding()", "Keep Exploring", "AssemblyLineStart()");
+        if (job == "Businessman") {
+            stageText = "\n\n"+newPar+"You also notice a little newspaper on the ground, talking about the company... their stock had risen significantly before the facility was abruptly shut down. Infighting within the company led to the old CEO being ousted by his own brother. You put together the pieces. The man in the suit. His revenge on his own family that ousted him.";
+        }
     }
+
 
     if (AssemblyPower) {
         if (items.includes("Keycard LVL 2") || items.includes("Keycard LVL 3") || items.includes("Master Keycard")) {
@@ -883,7 +918,7 @@ function ExploreControlCenter() {
 
         }
     } else {
-        stageText = "You make your way to the control room, but nothing's on... A power line seems to be leading to where the debris is. Maybe you'll come back later."
+        stageText = "You make your way to the control room, but nothing's on... A power line seems to be leading to where the debris is. You see a video recording playing in the back. You don't think you should be seeing this,Maybe you'll come back later."
         createStage(timeRemaining+" Minutes Left", newPar+stageText, "Continue", "AssemblyLineStart()");
     }
 }
@@ -1024,6 +1059,7 @@ function explainSuit() {
 function FightGuards() {
     energy -= 20;
     gameAreaFadeOut();
+    legalEscape = false;
     foughtGuards = true;
     timeRemaining -= 1;
     if (strength >= 7) {
@@ -1045,6 +1081,7 @@ function FightGuards2() {
     document.getElementById("gameImage").src = "Images/AbandonedFacility.jpg";
     energy -= 10;
     timeRemaining -= 2;
+    legalEscape = true;
     if (strength >= 10) {
         energy -= 10;
         timeRemaining -= 4;
@@ -1062,6 +1099,9 @@ function FightGuards2() {
 function Surrendered1() {
     gameAreaFadeOut(); 
     HP-=20;
+    legalEscape = true;
+    timeRemaining -= 2;
+
     items.push("Keycard LVL 1");
     stageText = newPar+"You put your hands behind your head and the guards roughed you up. You put your hands up to block the hits, and snagged a keycard from one of the guards while doing so. They then throw you back in the room, and now you're back where you started. Damn.";
     createStage(timeRemaining+" Minutes Left", stageText, "Understood", "StartGame2()", "", "");
